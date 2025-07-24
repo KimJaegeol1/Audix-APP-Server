@@ -1,15 +1,99 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider        = "prisma-client-js"
+  output          = "../generated/prisma"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["account", "mapping", "site"]
+}
+
+model companys {
+  id         Int       @id @default(autoincrement())
+  name       String    @unique @db.VarChar(20)
+  address    String    @unique @db.VarChar(50)
+  explain    String?   @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+  teams      teams[]
+  users      users[]
+
+  @@schema("account")
+}
+
+model teams {
+  id         Int       @id @default(autoincrement())
+  company_id Int?
+  leader_id  Int?
+  explain    String?   @db.VarChar(255)
+  name       String    @db.VarChar(20)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+  companys   companys? @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users      users?    @relation(fields: [leader_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("account")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model users {
+  id            Int         @id @default(autoincrement())
+  team_id       Int?
+  login_code    String      @unique @db.VarChar(20)
+  password      String      @db.VarChar(255)
+  name          String      @db.VarChar(10)
+  email         String      @unique @db.VarChar(30)
+  phone         String      @unique @db.VarChar(15)
+  position      String      @db.VarChar(15)
+  is_active     Boolean?    @default(true)
+  refresh_token String?     @db.VarChar(255)
+  created_at    DateTime?   @default(now()) @db.Timestamp(6)
+  updated_at    DateTime?   @default(now()) @db.Timestamp(6)
+  teams         teams[]
+  companys      companys?   @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_area     user_area[]
+
+  @@schema("account")
+}
+
+model user_area {
+  user_id    Int
+  area_id    Int
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  areas      areas     @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([user_id, area_id])
+  @@schema("mapping")
+}
+
+model areas {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique @db.VarChar(20)
+  address    String      @unique @db.VarChar(50)
+  explain    String?     @db.VarChar(255)
+  status     String?     @db.VarChar(255)
+  created_at DateTime?   @default(now()) @db.Timestamp(6)
+  updated_at DateTime?   @default(now()) @db.Timestamp(6)
+  user_area  user_area[]
+  devices    devices[]
+
+  @@schema("site")
+}
+
+model devices {
+  id         Int       @id @default(autoincrement())
+  area_id    Int?
+  name       String    @unique @db.VarChar(20)
+  address    String    @unique @db.VarChar(50)
+  explain    String?   @db.VarChar(255)
+  status     String?   @db.VarChar(255)
+  image      String?   @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+  areas      areas?    @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("site")
 }
