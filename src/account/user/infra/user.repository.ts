@@ -4,19 +4,21 @@ import { Prisma, users } from "@prisma/client";
 import { CreateUserDto } from "../domain/dto/CreateUserDto";
 
 @Injectable()
-export class UsersRepository {
+export class UserRepository {
     constructor(private readonly prisma: PrismaService) { }
+
     async getUserById(id: number): Promise<users | null> {
         const userInfo = await this.prisma.users.findUnique({
             where: { id: id },
         })
         return userInfo;
     }
-    async createUser(createUserDto: CreateUserDto): Promise<users> {
+
+    async createUser(createUserDto: CreateUserDto, tx: Prisma.TransactionClient = this.prisma): Promise<Boolean> {
         const userData = CreateUserDto.to(createUserDto);
-        const userInfo = await this.prisma.users.create({
+        await tx.users.create({
             data: userData
         });
-        return userInfo
+        return true;
     }
 }
