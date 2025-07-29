@@ -25,10 +25,10 @@ export class CreateUserDto {
 }
 
 export class CreateResultUserDto {
-    loginCode: string
+    loginCode: String
     isSuccess: boolean
 
-    constructor(init: { loginCode: string; isSuccess: boolean }) {
+    constructor(init: { loginCode: string, isSuccess: boolean }) {
         this.loginCode = init.loginCode;
         this.isSuccess = init.isSuccess
     }
