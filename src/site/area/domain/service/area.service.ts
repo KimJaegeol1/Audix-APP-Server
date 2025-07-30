@@ -34,7 +34,6 @@ export class AreaService {
         })
     }
 
-
     async findOne(id: number): Promise<object> {
         const area = await this.areaRepository.getAreaById(id);
         if (!area) {

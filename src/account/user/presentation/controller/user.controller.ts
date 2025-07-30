@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param } from "@nestjs/common";
+import { Controller, Post, Get, Body, Param, Query, ParseIntPipe } from "@nestjs/common";
 import { CreateRequestUserDto } from "../dto/create-user.dto";
 import { UserService } from "../../domain/service/user.service";
 
@@ -10,14 +10,14 @@ export class UserController {
     create(@Body() createRequestUserDto: CreateRequestUserDto) {
         return this.userService.create(createRequestUserDto)
     }
-
+    @Get('list')
+    findList(@Query('page', ParseIntPipe) page: number, @Query('limit', ParseIntPipe) limit: number) {
+        return this.userService.findList(page, limit);
+    }
     @Get(':id')
-    findOne(@Param('id') id: number) {
+    findOne(@Param('id', ParseIntPipe) id: number) {
         return this.userService.findOne(id);
     }
 
-    @Get('list')
-    findList(@Param('page') page: number, @Param('limit') limit: number) {
-        return this.userService.findList(page, limit);
-    }
+
 }

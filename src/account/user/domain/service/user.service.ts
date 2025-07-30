@@ -3,6 +3,7 @@ import { CreateRequestUserDto } from "../../presentation/dto/create-user.dto";
 import { CreateResultUserDto, CreateUserDto } from "../dto/CreateUserDto";
 import { PrismaService } from "src/common/db/prisma.service";
 import { UserRepository } from "../../infra/user.repository";
+import { users } from "generated/prisma";
 
 @Injectable()
 export class UserService {
@@ -39,7 +40,7 @@ export class UserService {
         })
     }
 
-    async findById(id: number): Promise<object> {
+    async findOne(id: number): Promise<object> {
         const user = await this.userRepository.getUserById(id);
         if (!user) {
             throw new NotFoundException(`해당하는 유저가 없습니다. ID: ${id}`);

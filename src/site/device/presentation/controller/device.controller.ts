@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, Query } from "@nestjs/common";
+import { Controller, Post, Get, Body, Param, Query, ParseIntPipe } from "@nestjs/common";
 import { CreateRequestDeviceDto } from "../dto/create-device.to";
 import { DeviceService } from "../../domain/service/device.service";
 
@@ -10,14 +10,14 @@ export class DeviceController {
     create(@Body() createRequestDeviceDto: CreateRequestDeviceDto) {
         return this.deviceService.create(createRequestDeviceDto);
     }
-
+    @Get('list')
+    findAll(@Query('page', ParseIntPipe) page: number, @Query('limit', ParseIntPipe) limit: number) {
+        return this.deviceService.findList(page, limit);
+    }
     @Get(':id')
-    findOne(@Param('id') id: number) {
+    findOne(@Param('id', ParseIntPipe) id: number) {
         return this.deviceService.findOne(id);
     }
 
-    @Get('list')
-    findAll(@Query('page') page: number, @Query('limit') limit: number) {
-        return this.deviceService.findList(page, limit);
-    }
+
 }
