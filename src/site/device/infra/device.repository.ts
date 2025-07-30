@@ -22,9 +22,9 @@ export class DeviceRepository {
         return deviceInfo;
     }
 
-    async getDeviceList(page: number | 0, limit: number | 100): Promise<devices[]> {
+    async getDeviceList(page: number, limit: number): Promise<devices[]> {
         const deviceList = await this.prisma.devices.findMany({
-            skip: page * limit || 0,
+            skip: page * limit,
             take: limit,
         });
         return deviceList;

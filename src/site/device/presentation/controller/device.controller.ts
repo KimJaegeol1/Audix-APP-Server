@@ -1,6 +1,7 @@
-import { Controller, Post, Get, Body, Param, Query, ParseIntPipe } from "@nestjs/common";
+import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe } from "@nestjs/common";
 import { CreateRequestDeviceDto } from "../dto/create-device.to";
 import { DeviceService } from "../../domain/service/device.service";
+import { NUMBER_CONSTANTS } from "src/common/constants/number";
 
 @Controller('admin/device')
 export class DeviceController {
@@ -11,7 +12,7 @@ export class DeviceController {
         return this.deviceService.create(createRequestDeviceDto);
     }
     @Get('list')
-    findAll(@Query('page', ParseIntPipe) page: number, @Query('limit', ParseIntPipe) limit: number) {
+    findAll(@Query('page', new DefaultValuePipe(NUMBER_CONSTANTS.DEFAULT_PAGE), ParseIntPipe) page: number, @Query('limit', new DefaultValuePipe(NUMBER_CONSTANTS.DEFAULT_LIMIT), ParseIntPipe) limit: number) {
         return this.deviceService.findList(page, limit);
     }
     @Get(':id')

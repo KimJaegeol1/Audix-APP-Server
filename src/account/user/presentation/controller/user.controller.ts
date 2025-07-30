@@ -1,6 +1,7 @@
-import { Controller, Post, Get, Body, Param, Query, ParseIntPipe } from "@nestjs/common";
+import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe } from "@nestjs/common";
 import { CreateRequestUserDto } from "../dto/create-user.dto";
 import { UserService } from "../../domain/service/user.service";
+import { NUMBER_CONSTANTS } from "src/common/constants/number";
 
 @Controller('admin/user')
 export class UserController {
@@ -11,7 +12,7 @@ export class UserController {
         return this.userService.create(createRequestUserDto)
     }
     @Get('list')
-    findList(@Query('page', ParseIntPipe) page: number, @Query('limit', ParseIntPipe) limit: number) {
+    findList(@Query('page', new DefaultValuePipe(NUMBER_CONSTANTS.DEFAULT_PAGE), ParseIntPipe) page: number, @Query('limit', new DefaultValuePipe(NUMBER_CONSTANTS.DEFAULT_LIMIT), ParseIntPipe) limit: number) {
         return this.userService.findList(page, limit);
     }
     @Get(':id')
