@@ -1,5 +1,5 @@
 import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe } from "@nestjs/common";
-import { CreateRequestDeviceDto } from "../dto/create-device.to";
+import { CreateRequestDeviceDto } from "../dto/create-device.dto";
 import { DeviceService } from "../../domain/service/device.service";
 import { NUMBER_CONSTANTS } from "src/common/constants/number";
 

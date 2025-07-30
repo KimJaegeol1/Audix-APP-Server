@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { CreateRequestDeviceDto } from "../../presentation/dto/create-device.to";
+import { CreateRequestDeviceDto } from "../../presentation/dto/create-device.dto";
 import { CreateResultDeviceDto, CreateDeviceDto } from "../dto/CreateDeviceDto";
 import { PrismaService } from "src/common/db/prisma.service";
 import { DeviceRepository } from "../../infra/device.repository";
