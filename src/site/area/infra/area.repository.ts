@@ -30,4 +30,17 @@ export class AreaRepository {
         return areaList;
     }
 
+    async getAreasByUserId(userId: number): Promise<areas[]> {
+        const areas = await this.prisma.areas.findMany({
+            where: {
+                user_area: {
+                    some: {
+                        user_id: userId
+                    }
+                }
+            }
+        });
+        return areas;
+    }
+
 }

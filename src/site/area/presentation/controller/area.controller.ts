@@ -19,6 +19,8 @@ export class AreaController {
     findOne(@Param('id', ParseIntPipe) id: number) {
         return this.areaService.findOne(id);
     }
-
-
+    @Get('list/user/:userId')
+    findListByUserId(@Param('userId', ParseIntPipe) userId: number) {
+        return this.areaService.findListByUserId(userId);
+    }
 }

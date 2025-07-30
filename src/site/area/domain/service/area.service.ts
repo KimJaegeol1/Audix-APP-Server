@@ -46,4 +46,12 @@ export class AreaService {
         const areaList = await this.areaRepository.getAreaList(page, limit);
         return areaList;
     }
+
+    async findListByUserId(userId: number): Promise<object[]> {
+        const areas = await this.areaRepository.getAreasByUserId(userId);
+        if (!areas || areas.length === 0) {
+            throw new NotFoundException(`해당하는 사용자의 지역이 없습니다. User ID: ${userId}`);
+        }
+        return areas;
+    }
 }
