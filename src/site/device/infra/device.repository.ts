@@ -29,4 +29,11 @@ export class DeviceRepository {
         });
         return deviceList;
     }
+
+    async getDeviceListByAreaId(areaId: number): Promise<devices[]> {
+        const deviceList = await this.prisma.devices.findMany({
+            where: { area_id: areaId },
+        });
+        return deviceList;
+    }
 }

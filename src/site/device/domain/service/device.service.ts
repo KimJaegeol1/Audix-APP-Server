@@ -47,4 +47,12 @@ export class DeviceService {
         const deviceList = await this.deviceRepository.getDeviceList(page, limit);
         return deviceList;
     }
+
+    async findListByAreaId(areaId: number): Promise<object[]> {
+        const devices = await this.deviceRepository.getDeviceListByAreaId(areaId);
+        if (!devices || devices.length === 0) {
+            throw new NotFoundException(`해당하는 지역의 장비가 없습니다. Area ID: ${areaId}`);
+        }
+        return devices;
+    }
 }

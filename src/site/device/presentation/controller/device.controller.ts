@@ -19,6 +19,9 @@ export class DeviceController {
     findOne(@Param('id', ParseIntPipe) id: number) {
         return this.deviceService.findOne(id);
     }
-
+    @Get('list/area/:areaId')
+    findListByAreaId(@Param('areaId', ParseIntPipe) areaId: number) {
+        return this.deviceService.findListByAreaId(areaId);
+    }
 
 }
