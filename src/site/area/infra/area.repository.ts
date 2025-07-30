@@ -22,10 +22,10 @@ export class AreaRepository {
         return areaInfo;
     }
 
-    async getAreaList(page: number): Promise<areas[]> {
+    async getAreaList(page: number, limit: number): Promise<areas[]> {
         const areaList = await this.prisma.areas.findMany({
-            skip: page * 100 || 0,
-            take: 100,
+            skip: page * limit || 0,
+            take: limit,
         });
         return areaList;
     }

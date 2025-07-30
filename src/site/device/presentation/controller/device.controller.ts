@@ -16,7 +16,7 @@ export class DeviceController {
         return this.deviceService.findOne(id);
     }
 
-    @Get()
+    @Get('list')
     findAll(@Query('page') page: number, @Query('limit') limit: number) {
         return this.deviceService.findList(page, limit);
     }

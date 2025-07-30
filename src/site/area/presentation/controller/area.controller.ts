@@ -10,4 +10,14 @@ export class AreaController {
     create(@Body() createRequestAreaDto: CreateRequestAreaDto) {
         return this.areaService.create(createRequestAreaDto)
     }
+
+    @Get(':id')
+    findOne(@Param('id') id: number) {
+        return this.areaService.findOne(id);
+    }
+
+    @Get('list')
+    findAll(@Query('page') page: number, @Query('limit') limit: number) {
+        return this.areaService.findList(page, limit);
+    }
 }

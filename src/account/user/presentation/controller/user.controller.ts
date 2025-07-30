@@ -12,7 +12,12 @@ export class UserController {
     }
 
     @Get(':id')
-    findOne(@Param('id') id: String) {
+    findOne(@Param('id') id: number) {
+        return this.userService.findOne(id);
+    }
 
+    @Get('list')
+    findList(@Param('page') page: number, @Param('limit') limit: number) {
+        return this.userService.findList(page, limit);
     }
 }

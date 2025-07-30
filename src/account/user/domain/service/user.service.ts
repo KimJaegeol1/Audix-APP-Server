@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateRequestUserDto } from "../../presentation/dto/create-user.dto";
 import { CreateResultUserDto, CreateUserDto } from "../dto/CreateUserDto";
 import { PrismaService } from "src/common/db/prisma.service";
@@ -37,5 +37,18 @@ export class UserService {
             loginCode: loginCode,
             isSuccess: result
         })
+    }
+
+    async findById(id: number): Promise<object> {
+        const user = await this.userRepository.getUserById(id);
+        if (!user) {
+            throw new NotFoundException(`해당하는 유저가 없습니다. ID: ${id}`);
+        }
+        return user;
+    }
+
+    async findList(page: number, limit: number): Promise<object[]> {
+        const userList = await this.userRepository.getUserList(page, limit);
+        return userList;
     }
 }

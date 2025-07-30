@@ -22,10 +22,10 @@ export class UserRepository {
         return userInfo;
     }
 
-    async getUserList(page: number): Promise<users[]> {
+    async getUserList(page: number, limit: number): Promise<users[]> {
         const userList = await this.prisma.users.findMany({
-            skip: page * 100 || 0, // 건너뛸 레코드의 개수를 지정 (기본값 : 0)
-            take: 100, // 가져올 레코드의 최대 개수를 지정 (기본값 : 무제한)
+            skip: page * limit || 0,
+            take: limit,
         });
         return userList;
     }
