@@ -64,24 +64,18 @@
 
 ### 로컬 환경 설정
 
-1. **저장소 클론**
-```bash
-git clone <repository-url>
-cd <project-directory>
-```
-
-2. **의존성 설치**
+**의존성 설치**
 ```bash
 npm install
 ```
 
-3. **환경 변수 설정**
+**환경 변수 설정**
 ```bash
 cp .env.example .env
 # .env 파일을 편집하여 데이터베이스 및 Redis 설정
 ```
 
-4. **데이터베이스 설정**
+**데이터베이스 설정**
 ```bash
 # Prisma 클라이언트 생성
 npx prisma generate
@@ -90,54 +84,19 @@ npx prisma generate
 npx prisma db push
 ```
 
-### 애플리케이션 실행
-
-#### 개발 모드
-```bash
-# 일반 실행
-npm run start
-
-# Watch 모드 (자동 재시작)
-npm run start:dev
-
-# 디버그 모드
-npm run start:debug
-```
-
-#### 프로덕션 모드
-```bash
-# 빌드
-npm run build
-
-# 프로덕션 실행
-npm run start:prod
-```
-
 ### Docker로 실행
 
 ```bash
 # Docker 이미지 빌드
-docker build -t ai-sound-detection .
+docker build -t audix-app-server .
 
 # 컨테이너 실행
-docker run -p 3000:3000 ai-sound-detection
+docker run -d --name nestjs-app \
+  --network app-network \
+  -p 3000:3000 \
+  audix-app-server
 ```
 
-## 🧪 테스트
-
-```bash
-# 단위 테스트
-npm run test
-
-# E2E 테스트
-npm run test:e2e
-
-# 테스트 커버리지
-npm run test:cov
-
-# Watch 모드 테스트
-npm run test:watch
-```
 
 ## 📁 프로젝트 구조
 
@@ -165,20 +124,6 @@ domain-module/
 └── module.ts        # 모듈 정의
 ```
 
-## 🔧 개발 도구
-
-### 코드 포맷팅
-```bash
-# Prettier를 사용한 코드 포맷팅
-npm run format
-```
-
-### 린팅
-```bash
-# ESLint를 사용한 코드 린팅
-npm run lint
-```
-
 ## 📊 시스템 요구사항
 
 - **실시간 데이터 수집**: 기계 소리, AI 분석 결과, 이상 감지 이벤트
@@ -195,22 +140,6 @@ npm run lint
 2. **보안**: HTTPS 설정 및 인증/인가 구현
 3. **모니터링**: 로그 수집 및 성능 모니터링 설정
 4. **백업**: 데이터베이스 정기 백업 설정
-
-## 🤝 기여하기
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📝 라이선스
-
-이 프로젝트는 [라이선스 유형]에 따라 라이선스가 부여됩니다.
-
-## 📞 연락처
-
-프로젝트 관련 문의사항이 있으시면 [연락처 정보]로 연락해 주세요.
 
 ---
 
