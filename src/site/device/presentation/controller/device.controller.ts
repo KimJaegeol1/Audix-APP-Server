@@ -1,14 +1,14 @@
 import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe } from "@nestjs/common";
 import { CreateRequestDeviceDto } from "../dto/create-device.dto";
-import { DeviceService } from "../../domain/service/device.service";
+import { DeviceService, DeviceInRedisService } from "../../domain/service/device.service";
 import { NUMBER_CONSTANTS } from "src/common/constants/number";
 import { DeviceDataInRedis } from "../../infra/device.redis.repository";
+
 
 @Controller('admin/device')
 export class DeviceController {
     constructor(private readonly deviceService: DeviceService) { }
 
-    // 기기 관련 엔드포인트
     @Post('')
     create(@Body() createRequestDeviceDto: CreateRequestDeviceDto) {
         return this.deviceService.create(createRequestDeviceDto);
@@ -25,23 +25,31 @@ export class DeviceController {
     findListByAreaId(@Param('areaId', ParseIntPipe) areaId: number) {
         return this.deviceService.findListByAreaId(areaId);
     }
+}
 
-    // Redis 관련 엔드포인트
+@Controller('admin/device/redis')
+export class DeviceInRedisController {
+    constructor(
+        private readonly deviceInRedisService: DeviceInRedisService
+    ) { }
+
     @Post('redis')
     createDeviceInRedis(@Body() deviceDataInRedis: DeviceDataInRedis) {
-        return this.deviceService.createDeviceInRedis(deviceDataInRedis);
-    }
-    @Get('redis/:deviceId')
-    findDeviceFromRedisByDeviceId(@Param('deviceId', ParseIntPipe) deviceId: number) {
-        return this.deviceService.findDeviceFromRedisByDeviceId(deviceId);
+        return this.deviceInRedisService.createDeviceInRedis(deviceDataInRedis);
     }
     @Get('redis/all')
     findAllDevicesFromRedis() {
-        return this.deviceService.findAllDevicesFromRedis();
+        return this.deviceInRedisService.findAllDevicesInRedis();
     }
     @Get('redis/area/:areaId')
     findDeviceListFromRedisByAreaId(@Param('areaId', ParseIntPipe) areaId: number) {
-        return this.deviceService.findDeviceListFromRedisByAreaId(areaId);
+        return this.deviceInRedisService.findDeviceListInRedisByAreaId(areaId);
     }
+    @Get('redis/:deviceId')
+    findDeviceFromRedisByDeviceId(@Param('deviceId', ParseIntPipe) deviceId: number) {
+        return this.deviceInRedisService.findDeviceInRedisByDeviceId(deviceId);
+    }
+
+
 
 }
