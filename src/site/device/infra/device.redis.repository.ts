@@ -4,6 +4,7 @@ import Redis from "ioredis";
 
 export interface DeviceData {
     deviceId: number;
+    areaId?: number;
     status: string;
     normalScore: number;
     name: string;
@@ -27,6 +28,7 @@ export class DeviceRedisRepository {
 
         const hashData = {
             deviceId: deviceData.deviceId.toString(),
+            areaId: deviceData.areaId ? deviceData.areaId.toString() : undefined,
             status: deviceData.status,
             normalScore: deviceData.normalScore.toString(),
             name: deviceData.name,
@@ -47,6 +49,7 @@ export class DeviceRedisRepository {
             if (data) {
                 devices.push({
                     deviceId: parseInt(data.deviceId),
+                    areaId: data.areaId ? parseInt(data.areaId) : undefined,
                     status: data.status,
                     normalScore: parseFloat(data.normalScore),
                     name: data.name,
@@ -59,8 +62,8 @@ export class DeviceRedisRepository {
         return devices;
     }
 
-    // id로 기기 조회
-    async getDeviceById(deviceId: number): Promise<DeviceData | null> {
+    // deviceId로 기기 조회
+    async getDeviceByDeviceId(deviceId: number): Promise<DeviceData | null> {
         const deviceKey = `device:${deviceId}`;
         const data = await this.redis.hgetall(deviceKey);
 
@@ -70,12 +73,36 @@ export class DeviceRedisRepository {
 
         return {
             deviceId: parseInt(data.deviceId),
+            areaId: data.areaId ? parseInt(data.areaId) : undefined,
             status: data.status,
             normalScore: parseFloat(data.normalScore),
             name: data.name,
             address: data.address,
             updatedAt: new Date(data.updatedAt),
         };
+    }
+
+    // areaId로 기기 조회
+    async getDevicesByAreaId(areaId: number): Promise<DeviceData[]> {
+        const keys = await this.redis.keys(`device:*`);
+        const devices: DeviceData[] = [];
+
+        for (const key of keys) {
+            const data = await this.redis.hgetall(key);
+            if (data && data.areaId && parseInt(data.areaId) === areaId) {
+                devices.push({
+                    deviceId: parseInt(data.deviceId),
+                    areaId: parseInt(data.areaId),
+                    status: data.status,
+                    normalScore: parseFloat(data.normalScore),
+                    name: data.name,
+                    address: data.address,
+                    updatedAt: new Date(data.updatedAt),
+                });
+            }
+        }
+
+        return devices;
     }
 
     // 업데이트 로직
@@ -88,6 +115,7 @@ export class DeviceRedisRepository {
         }
 
         const hashData: Record<string, string> = {};
+        if (updateData.areaId !== undefined) hashData.areaId = updateData.areaId.toString();
         if (updateData.status !== undefined) hashData.status = updateData.status;
         if (updateData.normalScore !== undefined) hashData.normalScore = updateData.normalScore.toString();
         if (updateData.name !== undefined) hashData.name = updateData.name;

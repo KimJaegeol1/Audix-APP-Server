@@ -3,13 +3,14 @@ import { CreateRequestDeviceDto } from "../../presentation/dto/create-device.dto
 import { CreateResultDeviceDto, CreateDeviceDto } from "../dto/CreateDeviceDto";
 import { PrismaService } from "src/common/db/prisma.service";
 import { DeviceRepository } from "../../infra/device.repository";
-import { DeviceRedisRepository } from "../../infra/device.redis.repository";
+import { DeviceRedisRepository, DeviceDataInRedis } from "../../infra/device.redis.repository";
 
 @Injectable()
 export class DeviceService {
     constructor(
         private readonly prisma: PrismaService,
-        private readonly deviceRepository: DeviceRepository
+        private readonly deviceRepository: DeviceRepository,
+        private readonly deviceRedisRepository: DeviceRedisRepository
     ) { }
 
     async create(createRequestDeviceDto: CreateRequestDeviceDto):
@@ -56,4 +57,29 @@ export class DeviceService {
         }
         return devices;
     }
+
+    async createDeviceInRedis(deviceDataInRedis: DeviceDataInRedis): Promise<void> {
+        await this.deviceRedisRepository.createDevice(deviceDataInRedis);
+    }
+
+    async findDeviceFromRedisByDeviceId(deviceId: number): Promise<DeviceDataInRedis | null> {
+        const device = await this.deviceRedisRepository.getDeviceByDeviceId(deviceId);
+        if (!device) {
+            throw new NotFoundException(`해당하는 기기가 없습니다. Device ID: ${deviceId}`);
+        }
+        return device;
+    }
+
+    async findAllDevicesFromRedis(): Promise<DeviceDataInRedis[]> {
+        return await this.deviceRedisRepository.getAllDevices();
+    }
+
+    async findDeviceListFromRedisByAreaId(areaId: number): Promise<DeviceDataInRedis[]> {
+        const deviceList = await this.deviceRedisRepository.getDevicesByAreaId(areaId);
+        if (!deviceList || deviceList.length === 0) {
+            throw new NotFoundException(`해당하는 지역의 기기가 없습니다. Area ID: ${areaId}`);
+        }
+        return deviceList;
+    }
+
 }

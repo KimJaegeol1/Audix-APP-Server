@@ -2,11 +2,13 @@ import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePi
 import { CreateRequestDeviceDto } from "../dto/create-device.dto";
 import { DeviceService } from "../../domain/service/device.service";
 import { NUMBER_CONSTANTS } from "src/common/constants/number";
+import { DeviceDataInRedis } from "../../infra/device.redis.repository";
 
 @Controller('admin/device')
 export class DeviceController {
     constructor(private readonly deviceService: DeviceService) { }
 
+    // 기기 관련 엔드포인트
     @Post('')
     create(@Body() createRequestDeviceDto: CreateRequestDeviceDto) {
         return this.deviceService.create(createRequestDeviceDto);
@@ -22,6 +24,24 @@ export class DeviceController {
     @Get('list/area/:areaId')
     findListByAreaId(@Param('areaId', ParseIntPipe) areaId: number) {
         return this.deviceService.findListByAreaId(areaId);
+    }
+
+    // Redis 관련 엔드포인트
+    @Post('redis')
+    createDeviceInRedis(@Body() deviceDataInRedis: DeviceDataInRedis) {
+        return this.deviceService.createDeviceInRedis(deviceDataInRedis);
+    }
+    @Get('redis/:deviceId')
+    findDeviceFromRedisByDeviceId(@Param('deviceId', ParseIntPipe) deviceId: number) {
+        return this.deviceService.findDeviceFromRedisByDeviceId(deviceId);
+    }
+    @Get('redis/all')
+    findAllDevicesFromRedis() {
+        return this.deviceService.findAllDevicesFromRedis();
+    }
+    @Get('redis/area/:areaId')
+    findDeviceListFromRedisByAreaId(@Param('areaId', ParseIntPipe) areaId: number) {
+        return this.deviceService.findDeviceListFromRedisByAreaId(areaId);
     }
 
 }
