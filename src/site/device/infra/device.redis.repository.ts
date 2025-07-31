@@ -38,7 +38,7 @@ export class DeviceRedisRepository {
     }
 
     // 모든 기기 조회
-    async getAllDevices(): Promise<DeviceDataInRedis[]> {
+    async getDeviceList(): Promise<DeviceDataInRedis[]> {
         const keys = await this.redis.keys("device:*");
         const devices: DeviceDataInRedis[] = [];
 
@@ -79,7 +79,7 @@ export class DeviceRedisRepository {
     }
 
     // areaId로 기기 조회
-    async getDevicesByAreaId(areaId: number): Promise<DeviceDataInRedis[]> {
+    async getDeviceListByAreaId(areaId: number): Promise<DeviceDataInRedis[]> {
         const keys = await this.redis.keys(`device:*`);
         const devices: DeviceDataInRedis[] = [];
 

@@ -63,7 +63,6 @@ export class DeviceService {
 
 export class DeviceInRedisService {
     constructor(
-        private readonly prisma: PrismaService,
         private readonly deviceRedisRepository: DeviceRedisRepository
     ) { }
 
@@ -80,11 +79,11 @@ export class DeviceInRedisService {
     }
 
     async findAllDevicesInRedis(): Promise<DeviceDataInRedis[]> {
-        return await this.deviceRedisRepository.getAllDevices();
+        return await this.deviceRedisRepository.getDeviceList();
     }
 
     async findDeviceListInRedisByAreaId(areaId: number): Promise<DeviceDataInRedis[]> {
-        const deviceList = await this.deviceRedisRepository.getDevicesByAreaId(areaId);
+        const deviceList = await this.deviceRedisRepository.getDeviceListByAreaId(areaId);
         if (!deviceList || deviceList.length === 0) {
             throw new NotFoundException(`해당하는 지역의 기기가 없습니다. Area ID: ${areaId}`);
         }

@@ -4,9 +4,10 @@ import { DeviceService, DeviceInRedisService } from "./domain/service/device.ser
 import { DeviceRepository } from "./infra/device.repository";
 import { DeviceRedisRepository } from "./infra/device.redis.repository";
 import { PrismaModule } from "src/common/db/prisma.module";
+import { RedisModule } from "@nestjs-modules/ioredis";
 
 @Module({
-    imports: [PrismaModule],
+    imports: [PrismaModule, RedisModule],
     controllers: [DeviceController, DeviceInRedisController],
     providers: [DeviceService, DeviceInRedisService, DeviceRepository, DeviceRedisRepository]
 })
