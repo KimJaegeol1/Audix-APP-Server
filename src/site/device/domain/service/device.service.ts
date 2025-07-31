@@ -61,6 +61,7 @@ export class DeviceService {
 
 }
 
+@Injectable()
 export class DeviceInRedisService {
     constructor(
         private readonly deviceRedisRepository: DeviceRedisRepository
