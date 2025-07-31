@@ -10,7 +10,6 @@ export class DeviceService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly deviceRepository: DeviceRepository,
-        private readonly deviceRedisRepository: DeviceRedisRepository
     ) { }
 
     async create(createRequestDeviceDto: CreateRequestDeviceDto):

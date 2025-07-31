@@ -33,19 +33,19 @@ export class DeviceInRedisController {
         private readonly deviceInRedisService: DeviceInRedisService
     ) { }
 
-    @Post('redis')
+    @Post('')
     createDeviceInRedis(@Body() deviceDataInRedis: DeviceDataInRedis) {
         return this.deviceInRedisService.createDeviceInRedis(deviceDataInRedis);
     }
-    @Get('redis/all')
+    @Get('all')
     findAllDevicesFromRedis() {
         return this.deviceInRedisService.findAllDevicesInRedis();
     }
-    @Get('redis/area/:areaId')
+    @Get('area/:areaId')
     findDeviceListFromRedisByAreaId(@Param('areaId', ParseIntPipe) areaId: number) {
         return this.deviceInRedisService.findDeviceListInRedisByAreaId(areaId);
     }
-    @Get('redis/:deviceId')
+    @Get(':deviceId')
     findDeviceFromRedisByDeviceId(@Param('deviceId', ParseIntPipe) deviceId: number) {
         return this.deviceInRedisService.findDeviceInRedisByDeviceId(deviceId);
     }
