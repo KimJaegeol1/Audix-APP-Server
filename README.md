@@ -1,4 +1,4 @@
-# AI 환경 소리 인식 경고 시스템
+# Audix APP Server
 
 <p align="center">
   <img src="https://img.shields.io/badge/Node.js-v22-green.svg" alt="Node.js Version" />
@@ -7,27 +7,70 @@
   <img src="https://img.shields.io/badge/PostgreSQL-latest-blue.svg" alt="PostgreSQL" />
   <img src="https://img.shields.io/badge/Redis-latest-red.svg" alt="Redis" />
   <img src="https://img.shields.io/badge/Prisma-v6.12-darkgreen.svg" alt="Prisma Version" />
+  <img src="https://img.shields.io/badge/WebSocket-Socket.IO-orange.svg" alt="WebSocket" />
 </p>
 
 ## 📋 프로젝트 개요
 
-자동차 공장에서 발생하는 기계 소리를 AI가 실시간으로 분석하여 이상음 여부를 판단하고 고장 가능성을 조기 탐지하는 시스템입니다.
+**Audix**는 산업용 장비의 이상음을 AI로 실시간 감지하여 모바일 앱으로 즉시 알림을 제공하는 **스마트 팩토리 솔루션**의 백엔드 서버입니다.
 
-### 🎯 목표
-도심, 공장 등 특정 환경에서 소리(경적, 비명, 기계 이상음 등)를 인식해 이상 발생 시 경고하는 AI 환경 소리 인식 경고 시스템
+### 🎯 주요 역할
+- **🔗 ML Server 연동**: AI 분석 결과를 Redis PubSub으로 수신
+- **📱 실시간 알림**: WebSocket을 통한 모바일 앱 실시간 알림 전송
+- **📊 데이터 관리**: 장비, 구역, 사용자 데이터 관리
+- **🚨 알림 히스토리**: 이상 감지 알림 로그 저장 및 조회
 
-### ✨ 주요 기능
+### ✨ 핵심 기능
 
-- **🔊 실시간 소리 인식**: AI 기반 소리 분류 및 이상음 탐지
-- **📊 웹 대시보드**: 구역 및 기기별 소음 통계와 이상 패턴 시각화
-- **📱 모바일 알림**: '점검 요망' 및 '위험 알림' 실시간 경고
-- **🚨 긴급 상황 대응**: 산업재해 등 긴급 상황 시 소리 기반 위험 알림
-- **📈 데이터 분석**: 대량 데이터 집계 및 시각화
-- **🔧 확장성**: 공장 추가, 디바이스 추가 등 스케일 확장 지원
+- **🔊 실시간 이상음 감지**: ML Server로부터 AI 분석 결과 수신
+- **� WebSocket 통신**: 모바일 앱과 실시간 양방향 통신
+- **� 알림 관리**: 장비별 이상 감지 알림 히스토리 관리
+- **🏭 현장 관리**: 구역별 장비 상태 모니터링
+- **👥 사용자 관리**: 팀별 권한 관리 및 알림 설정
 
-### 🏭 적용 분야
-- **스마트시티**: 도심 환경 소음 모니터링
-- **산업안전**: 공장 기계 이상음 탐지 및 안전 관리
+## 🏗️ 시스템 아키텍처
+
+### 마이크로서비스 구조
+```
+┌─────────────────┐    Redis PubSub    ┌─────────────────┐    WebSocket    ┌─────────────────┐
+│   ML Server     │ ─────────────────▶ │   APP Server    │ ──────────────▶ │  Mobile App     │
+│  (AI 분석)       │                    │  (백엔드 서버)    │                 │ (React Native)  │
+└─────────────────┘                    └─────────────────┘                 └─────────────────┘
+                                               │
+                                               ▼
+                                        ┌─────────────────┐
+                                        │   PostgreSQL    │
+                                        │   (데이터 저장)   │
+                                        └─────────────────┘
+```
+
+### 기술 스택
+- **Framework**: NestJS 11 (Node.js 22)
+- **Database**: PostgreSQL (Prisma ORM)
+- **Cache & PubSub**: Redis
+- **Real-time**: WebSocket (Socket.IO)
+- **Language**: TypeScript
+- **Container**: Docker
+
+## 🔄 데이터 흐름
+
+### 1. 이상음 감지 프로세스
+```
+1️⃣ ML Server: 장비 음성 분석 → normalScore ≤ 0.5 감지
+2️⃣ Redis PubSub: 'device_alerts' 채널로 메시지 발행
+3️⃣ APP Server: Redis 메시지 수신 → 데이터 저장
+4️⃣ WebSocket: 연결된 모바일 앱으로 실시간 알림 전송
+5️⃣ Mobile App: 알림 모달 표시
+```
+
+### 2. 메시지 포맷
+```json
+{
+  "deviceId": 1001,
+  "normalScore": 0.3,
+  "timestamp": "2025-01-08T09:00:00.000Z"
+}
+```
 
 ## 🏗️ 시스템 아키텍처
 
@@ -60,22 +103,36 @@
 - Node.js 22+
 - PostgreSQL
 - Redis
-- Docker (선택사항)
+- Docker (권장)
 
-### 로컬 환경 설정
+### 패키지 설치
 
-**의존성 설치**
 ```bash
 npm install
 ```
 
-**환경 변수 설정**
+**필수 패키지**:
+- `@nestjs/websockets`: WebSocket 지원
+- `@nestjs/platform-socket.io`: Socket.IO 플랫폼
+- `@nestjs-modules/ioredis`: Redis 클라이언트
+- `socket.io`: WebSocket 서버
+
+### 환경 변수 설정
+
 ```bash
 cp .env.example .env
 # .env 파일을 편집하여 데이터베이스 및 Redis 설정
 ```
 
-**데이터베이스 설정**
+**필수 환경 변수**:
+```env
+DATABASE_URL="postgresql://username:password@localhost:5432/audix"
+REDIS_HOST="localhost"
+REDIS_PORT=6379
+```
+
+### 데이터베이스 설정
+
 ```bash
 # Prisma 클라이언트 생성
 npx prisma generate
@@ -84,19 +141,35 @@ npx prisma generate
 npx prisma db push
 ```
 
-### Docker로 실행
+## 🐳 Docker 실행
 
+### 네트워크 생성
 ```bash
-# Docker 이미지 빌드
+docker network create app-network
+```
+
+### Redis 서버
+```bash
+# Redis 빌드 및 실행
+docker build -f redis-server/Dockerfile . -t redis
+docker run -d --name redis-server --network app-network -p 6379:6379 redis
+```
+
+### APP Server
+```bash
+# NestJS 빌드
 docker build -t audix-app-server .
 
 # 컨테이너 실행
-docker run -d --name nestjs-app \
-  --network app-network \
-  -p 3000:3000 \
-  audix-app-server
+docker run -d --name audix-app-server --network app-network -p 3000:3000 audix-app-server
 ```
 
+### ML Server (연동용)
+```bash
+# ML Server 빌드 및 실행
+docker build -t audix-ml-server ml-server/
+docker run -d --name audix-ml-server --network app-network -p 8000:8000 audix-ml-server
+```
 
 ## 📁 프로젝트 구조
 
@@ -108,44 +181,151 @@ src/
 │   ├── area/         # 구역 관리
 │   └── device/       # 디바이스 관리
 ├── mapping/          # 관계 매핑 모듈
+├── alarm/            # 🆕 알림 관리 모듈
+│   ├── redis-pubsub/ # Redis PubSub 서비스
+│   └── test/         # 테스트 컨트롤러
 ├── common/           # 공통 모듈
 │   └── db/           # 데이터베이스 설정
 └── main.ts           # 애플리케이션 진입점
 ```
 
-### 모듈 구조
-각 도메인 모듈은 다음과 같은 구조를 따릅니다:
+### 🚨 알림 모듈 상세
 
 ```
-domain-module/
-├── presentation/     # 컨트롤러 계층
-├── domain/          # 비즈니스 로직 계층
-├── infra/           # 인프라 계층 (Repository)
-└── module.ts        # 모듈 정의
+src/alarm/
+├── redis-pubsub/
+│   ├── redis-pubsub.service.ts    # Redis 구독 및 WebSocket 전송
+│   ├── redis-pubsub.module.ts     # 모듈 설정
+│   └── device-alert.gateway.ts    # WebSocket Gateway
+└── test/
+    └── test.controller.ts          # 테스트 API
 ```
 
-## 📊 시스템 요구사항
+## 🔧 API 엔드포인트
 
-- **실시간 데이터 수집**: 기계 소리, AI 분석 결과, 이상 감지 이벤트
-- **데이터 저장**: 기기별 상태 및 알림 로그
-- **통계 분석**: 웹에서 대량 데이터 집계 및 시각화
-- **실시간 알림**: 앱을 통한 관리자 빠른 응답
-- **확장성**: 공장 및 디바이스 추가를 위한 스케일 확장
+### 테스트 API
+```bash
+# 테스트 알림 발행
+POST /test/alert/:deviceId?normalScore=0.3
 
-## 🚀 배포
+# 알림 히스토리 조회
+GET /test/alerts
+```
 
-프로덕션 환경에 배포할 때는 다음 사항을 고려하세요:
+### WebSocket 이벤트
+```javascript
+// 클라이언트 연결
+const socket = io('http://localhost:3000');
 
-1. **환경 변수**: 프로덕션용 데이터베이스 및 Redis 설정
-2. **보안**: HTTPS 설정 및 인증/인가 구현
-3. **모니터링**: 로그 수집 및 성능 모니터링 설정
-4. **백업**: 데이터베이스 정기 백업 설정
+// 실시간 알림 수신
+socket.on('device-alert', (data) => {
+  console.log('장비 알림:', data);
+  // { deviceId: 1001, normalScore: 0.3 }
+});
+```
+
+## 🧪 테스트
+
+### 1. 서버 실행 상태 확인
+```bash
+curl http://localhost:3000
+```
+
+### 2. Redis PubSub 테스트
+```bash
+# 테스트 알림 발행
+curl -X POST "http://localhost:3000/test/alert/1001?normalScore=0.3"
+```
+
+### 3. WebSocket 연결 테스트
+```javascript
+// 브라우저 콘솔에서 테스트
+const socket = io('http://localhost:3000');
+socket.on('connect', () => console.log('WebSocket 연결됨'));
+socket.on('device-alert', (data) => console.log('알림 수신:', data));
+```
+
+### 4. 알림 히스토리 확인
+```bash
+curl http://localhost:3000/test/alerts
+```
+
+## 📊 데이터베이스 구조
+
+### 스키마 구성
+```
+📊 Prisma 스키마
+├── account (계정 관리)
+│   ├── companys - 회사 정보
+│   ├── users - 사용자 정보
+│   └── teams - 팀 정보
+├── site (현장 관리)
+│   ├── areas - 구역 정보
+│   └── devices - 디바이스 정보
+└── mapping (관계 매핑)
+    └── user_area - 사용자-구역 매핑
+```
+
+### Redis 데이터 구조
+```
+Redis Keys:
+├── device:{deviceId} - 장비 상태 정보
+│   ├── status: "abnormal" | "normal"
+│   ├── lastAlertTime: ISO timestamp
+│   └── normalScore: number
+└── alert:{deviceId}:{timestamp} - 알림 로그 (7일 TTL)
+    ├── deviceId: number
+    ├── normalScore: number
+    ├── timestamp: ISO timestamp
+    └── type: "low_normal_score"
+```
+
+## 🚀 배포 및 운영
+
+### 프로덕션 환경 체크리스트
+
+- [ ] **환경 변수**: 프로덕션용 데이터베이스 및 Redis 설정
+- [ ] **보안**: HTTPS 설정 및 CORS 정책 설정
+- [ ] **모니터링**: 로그 수집 및 성능 모니터링 설정
+- [ ] **백업**: 데이터베이스 정기 백업 설정
+- [ ] **스케일링**: 로드 밸런서 및 클러스터링 고려
+
+### 모니터링 포인트
+
+```bash
+# 서버 상태 확인
+curl http://localhost:3000/health
+
+# Redis 연결 상태
+redis-cli ping
+
+# WebSocket 연결 수 확인
+curl http://localhost:3000/metrics
+```
+
+## 🔗 관련 프로젝트
+
+- **ML Server**: AI 모델 서버 (Python FastAPI)
+- **Mobile App**: React Native 앱
+- **Redis Server**: PubSub 메시징 서버
+
+## 📚 기술 문서
+
+- [NestJS 공식 문서](https://nestjs.com/)
+- [Socket.IO 공식 문서](https://socket.io/docs/)
+- [Prisma 공식 문서](https://www.prisma.io/docs/)
+- [Redis 공식 문서](https://redis.io/documentation/)
+
+## 🤝 기여하기
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ---
 
-## 🔗 관련 링크
-
-- [NestJS 공식 문서](https://nestjs.com/)
-- [Prisma 공식 문서](https://www.prisma.io/docs/)
-- [PostgreSQL 공식 문서](https://www.postgresql.org/docs/)
-- [Redis 공식 문서](https://redis.io/documentation/)
+<p align="center">
+  <b>Audix APP Server</b> - Smart Factory Sound Monitoring Solution 🏭🔊
+</p>
