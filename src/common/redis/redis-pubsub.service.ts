@@ -7,6 +7,14 @@ export interface DeviceAlertMessage {
     normalScore: number;
 }
 
+interface AlertData {
+    key: string;
+    deviceId: string;
+    normalScore: string;
+    timestamp: string;
+    type: string;
+}
+
 @Injectable()
 export class RedisPubSubService implements OnModuleInit, OnModuleDestroy {
     private readonly logger = new Logger(RedisPubSubService.name);
@@ -77,9 +85,6 @@ export class RedisPubSubService implements OnModuleInit, OnModuleDestroy {
 
             this.logger.log(`✅ 장비 ${alertData.deviceId} 이상 상태로 업데이트 완료`);
 
-            // 4. 추가 처리 (필요시 모바일 앱 푸시 알림, 이메일 등)
-            // await this.sendPushNotification(alertData);
-
         } catch (error) {
             this.logger.error(`장비 알림 처리 오류: ${error.message}`, error.stack);
         }
@@ -90,5 +95,44 @@ export class RedisPubSubService implements OnModuleInit, OnModuleDestroy {
         const message = JSON.stringify({ deviceId, normalScore });
         await this.redis.publish('device_alerts', message);
         this.logger.log(`테스트 알림 발행: Device ${deviceId}, Score ${normalScore}`);
+    }
+
+    // 모든 알림 히스토리 조회
+    async getAllAlerts(): Promise<AlertData[]> {
+        try {
+            // alert:* 패턴으로 모든 알림 키 찾기
+            const alertKeys = await this.redis.keys('alert:*');
+
+            if (alertKeys.length === 0) {
+                return [];
+            }
+
+            // 각 키의 데이터 가져오기
+            const alerts: AlertData[] = [];
+            for (const key of alertKeys) {
+                const alertData = await this.redis.hgetall(key);
+                if (alertData && Object.keys(alertData).length > 0) {
+                    alerts.push({
+                        key,
+                        deviceId: alertData.deviceId || '',
+                        normalScore: alertData.normalScore || '',
+                        timestamp: alertData.timestamp || '',
+                        type: alertData.type || ''
+                    });
+                }
+            }
+
+            // 시간순으로 정렬 (최신순)
+            alerts.sort((a, b) => {
+                const timeA = new Date(a.timestamp).getTime();
+                const timeB = new Date(b.timestamp).getTime();
+                return timeB - timeA;
+            });
+
+            return alerts;
+        } catch (error) {
+            this.logger.error(`알림 히스토리 조회 오류: ${error.message}`, error.stack);
+            return [];
+        }
     }
 }
