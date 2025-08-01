@@ -40,6 +40,8 @@ export class DeviceInRedisController {
     @Get('all')
     findAllDevicesFromRedis() {
         return this.deviceInRedisService.findAllDevicesInRedis();
+
+
     }
     @Get('area/:areaId')
     findDeviceListFromRedisByAreaId(@Param('areaId', ParseIntPipe) areaId: number) {
