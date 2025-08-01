@@ -6,4 +6,4 @@ import { RedisPubSubService } from './redis-pubsub.service';
     providers: [RedisPubSubService],
     exports: [RedisPubSubService],
 })
-export class RedisServicesModule { }
+export class RedisPubSubModule { }

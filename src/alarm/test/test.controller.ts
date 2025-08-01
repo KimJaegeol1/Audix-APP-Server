@@ -1,5 +1,5 @@
 import { Controller, Post, Get, Param, Query, ParseIntPipe, DefaultValuePipe } from '@nestjs/common';
-import { RedisPubSubService } from '../redis/redis-pubsub.service';
+import { RedisPubSubService } from '../redis-pubsub/redis-pubsub.service';
 
 @Controller('test')
 export class TestController {
