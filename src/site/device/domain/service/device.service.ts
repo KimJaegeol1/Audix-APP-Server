@@ -57,8 +57,10 @@ export class DeviceService {
         return devices;
     }
 
-
-
+    async deleteDeviceALL(): Promise<any> {
+        const result = await this.deviceRepository.deleteDeviceALL();
+        return result;
+    }
 }
 
 @Injectable()

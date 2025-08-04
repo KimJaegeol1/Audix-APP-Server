@@ -25,6 +25,10 @@ export class DeviceController {
     findListByAreaId(@Param('areaId', ParseIntPipe) areaId: number) {
         return this.deviceService.findListByAreaId(areaId);
     }
+    @Delete('all')
+    deleteDeviceALL() {
+        return this.deviceService.deleteDeviceALL();
+    }
 }
 
 @Controller('admin/device/redis')

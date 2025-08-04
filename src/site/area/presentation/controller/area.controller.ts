@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe, UseInterceptors, UploadedFile, BadRequestException } from "@nestjs/common";
+import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe, UseInterceptors, UploadedFile, BadRequestException, Delete } from "@nestjs/common";
 import { CreateRequestAreaDto } from "../dto/create-area.dto";
 import { AreaService } from "../../domain/service/area.service";
 import { NUMBER_CONSTANTS } from "src/common/constants/number";
@@ -35,5 +35,9 @@ export class AreaController {
     @Get('list/user/:userId')
     findListByUserId(@Param('userId', ParseIntPipe) userId: number) {
         return this.areaService.findListByUserId(userId);
+    }
+    @Delete('all')
+    deleteAreaALL() {
+        return this.areaService.deleteAreaALL();
     }
 }

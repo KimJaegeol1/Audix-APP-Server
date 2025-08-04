@@ -54,4 +54,9 @@ export class AreaService {
         }
         return areas;
     }
+
+    async deleteAreaALL(): Promise<any> {
+        const result = await this.areaRepository.deleteAreaALL();
+        return result;
+    }
 }

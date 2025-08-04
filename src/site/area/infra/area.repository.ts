@@ -43,4 +43,9 @@ export class AreaRepository {
         return areas;
     }
 
+    async deleteAreaALL(): Promise<Boolean> {
+        await this.prisma.areas.deleteMany();
+        return true;
+    }
+
 }

@@ -36,4 +36,9 @@ export class DeviceRepository {
         });
         return deviceList;
     }
+
+    async deleteDeviceALL(): Promise<Boolean> {
+        await this.prisma.devices.deleteMany();
+        return true;
+    }
 }
