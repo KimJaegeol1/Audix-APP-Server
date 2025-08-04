@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe } from "@nestjs/common";
+import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe, Delete } from "@nestjs/common";
 import { CreateRequestDeviceDto } from "../dto/create-device.dto";
 import { DeviceService, DeviceInRedisService } from "../../domain/service/device.service";
 import { NUMBER_CONSTANTS } from "src/common/constants/number";
@@ -40,8 +40,6 @@ export class DeviceInRedisController {
     @Get('all')
     findAllDevicesFromRedis() {
         return this.deviceInRedisService.findAllDevicesInRedis();
-
-
     }
     @Get('area/:areaId')
     findDeviceListFromRedisByAreaId(@Param('areaId', ParseIntPipe) areaId: number) {
@@ -51,7 +49,13 @@ export class DeviceInRedisController {
     findDeviceFromRedisByDeviceId(@Param('deviceId', ParseIntPipe) deviceId: number) {
         return this.deviceInRedisService.findDeviceInRedisByDeviceId(deviceId);
     }
-
-
+    @Delete('all')
+    deleteAllDevicesInRedis() {
+        return this.deviceInRedisService.deleteDeviceInRedisAll();
+    }
+    @Delete(':deviceId')
+    deleteDeviceInRedisByDeviceId(@Param('deviceId', ParseIntPipe) deviceId: number) {
+        return this.deviceInRedisService.deleteDeviceInRedisByDeviceId(deviceId);
+    }
 
 }

@@ -5,10 +5,13 @@ import Redis from "ioredis";
 export interface DeviceDataInRedis {
     deviceId: number;
     areaId?: number;
-    status: string;
-    normalScore: number;
+    explain: string;
     name: string;
     address: string;
+    status: string;
+    deviceManager?: string;
+    image?: string;
+    normalScore: number;
 }
 
 @Injectable()
@@ -28,10 +31,13 @@ export class DeviceRedisRepository {
         const hashData = {
             deviceId: deviceDataInRedis.deviceId.toString(),
             areaId: deviceDataInRedis.areaId ? deviceDataInRedis.areaId.toString() : undefined,
-            status: deviceDataInRedis.status,
-            normalScore: deviceDataInRedis.normalScore.toString(),
+            explain: deviceDataInRedis.explain,
             name: deviceDataInRedis.name,
             address: deviceDataInRedis.address,
+            status: deviceDataInRedis.status,
+            deviceManager: deviceDataInRedis.deviceManager || "",
+            image: deviceDataInRedis.image || "",
+            normalScore: deviceDataInRedis.normalScore.toString(),
         }
 
         await this.redis.hset(deviceKey, hashData);
@@ -48,10 +54,13 @@ export class DeviceRedisRepository {
                 devices.push({
                     deviceId: parseInt(data.deviceId),
                     areaId: data.areaId ? parseInt(data.areaId) : undefined,
-                    status: data.status,
-                    normalScore: parseFloat(data.normalScore),
+                    explain: data.explain,
                     name: data.name,
                     address: data.address,
+                    status: data.status,
+                    deviceManager: data.deviceManager || "",
+                    image: data.image || "",
+                    normalScore: parseFloat(data.normalScore),
                 });
             }
         }
@@ -71,10 +80,13 @@ export class DeviceRedisRepository {
         return {
             deviceId: parseInt(data.deviceId),
             areaId: data.areaId ? parseInt(data.areaId) : undefined,
-            status: data.status,
-            normalScore: parseFloat(data.normalScore),
+            explain: data.explain,
             name: data.name,
             address: data.address,
+            status: data.status,
+            deviceManager: data.deviceManager || "",
+            image: data.image || "",
+            normalScore: parseFloat(data.normalScore),
         };
     }
 
@@ -89,10 +101,13 @@ export class DeviceRedisRepository {
                 devices.push({
                     deviceId: parseInt(data.deviceId),
                     areaId: parseInt(data.areaId),
-                    status: data.status,
-                    normalScore: parseFloat(data.normalScore),
+                    explain: data.explain,
                     name: data.name,
                     address: data.address,
+                    status: data.status,
+                    deviceManager: data.deviceManager || "",
+                    image: data.image || "",
+                    normalScore: parseFloat(data.normalScore),
                 });
             }
         }
@@ -115,12 +130,14 @@ export class DeviceRedisRepository {
         if (updateData.normalScore !== undefined) hashData.normalScore = updateData.normalScore.toString();
         if (updateData.name !== undefined) hashData.name = updateData.name;
         if (updateData.address !== undefined) hashData.address = updateData.address;
+        if (updateData.deviceManager !== undefined) hashData.deviceManager = updateData.deviceManager;
+        if (updateData.image !== undefined) hashData.image = updateData.image;
 
         await this.redis.hset(deviceKey, hashData);
     }
 
-    // 삭제 로직
-    async deleteDevice(deviceId: number): Promise<void> {
+    // 디바이스 아이디로 디바이스 삭제
+    async deleteDeviceByDeviceId(deviceId: number): Promise<void> {
         const deviceKey = `device:${deviceId}`;
         const exists = await this.redis.exists(deviceKey);
 
@@ -129,5 +146,13 @@ export class DeviceRedisRepository {
         }
 
         await this.redis.del(deviceKey)
+    }
+
+    // 전체 디바이스 삭제
+    async deleteAllDevices(): Promise<void> {
+        const keys = await this.redis.keys("device:*");
+        if (keys.length > 0) {
+            await this.redis.del(keys);
+        }
     }
 }

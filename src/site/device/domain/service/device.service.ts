@@ -91,4 +91,16 @@ export class DeviceInRedisService {
         return deviceList;
     }
 
+    async deleteDeviceInRedisAll(): Promise<void> {
+        await this.deviceRedisRepository.deleteAllDevices();
+    }
+
+    async deleteDeviceInRedisByDeviceId(deviceId: number): Promise<void> {
+        const device = await this.deviceRedisRepository.getDeviceByDeviceId(deviceId);
+        if (!device) {
+            throw new NotFoundException(`해당하는 기기가 없습니다. Device ID: ${deviceId}`);
+        }
+        await this.deviceRedisRepository.deleteDeviceByDeviceId(deviceId);
+    }
+
 }
