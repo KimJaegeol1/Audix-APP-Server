@@ -8,8 +8,11 @@ async function bootstrap() {
 
   // 정적 파일 서빙 설정
   app.useStaticAssets(join(__dirname, '..', 'public'), {
-    prefix: '/public/'
+    prefix: '/'  // /images/ 경로로 직접 접근 가능하도록 설정
   })
+
+  console.log('📁 Static assets path:', join(__dirname, '..', 'public'));
+  console.log('🌐 Static files served at: http://localhost:3000/');
 
   // CORS 설정 추가
   app.enableCors({
