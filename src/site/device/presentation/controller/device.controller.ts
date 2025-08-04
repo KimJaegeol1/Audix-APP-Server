@@ -1,16 +1,25 @@
-import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe, Delete } from "@nestjs/common";
+import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe, Delete, UseInterceptors, UploadedFile } from "@nestjs/common";
 import { CreateRequestDeviceDto } from "../dto/create-device.dto";
 import { DeviceService, DeviceInRedisService } from "../../domain/service/device.service";
 import { NUMBER_CONSTANTS } from "src/common/constants/number";
 import { DeviceDataInRedis } from "../../infra/device.redis.repository";
-
+import { multerConfig } from "src/common/multer/multer.config";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller('admin/device')
 export class DeviceController {
     constructor(private readonly deviceService: DeviceService) { }
 
     @Post('')
-    create(@Body() createRequestDeviceDto: CreateRequestDeviceDto) {
+    @UseInterceptors(FileInterceptor('image', multerConfig))
+    create(
+        @Body() createRequestDeviceDto: CreateRequestDeviceDto,
+        @UploadedFile() file: Express.Multer.File
+    ) {
+        if (file) {
+            const imagePath = `/images/${file.filename}`;
+            createRequestDeviceDto.image = imagePath;
+        }
         return this.deviceService.create(createRequestDeviceDto);
     }
     @Get('list')

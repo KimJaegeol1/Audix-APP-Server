@@ -1,10 +1,9 @@
-import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe, UseInterceptors, UploadedFile, BadRequestException, Delete } from "@nestjs/common";
+import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe, UseInterceptors, UploadedFile, Delete } from "@nestjs/common";
 import { CreateRequestAreaDto } from "../dto/create-area.dto";
 import { AreaService } from "../../domain/service/area.service";
 import { NUMBER_CONSTANTS } from "src/common/constants/number";
 import { multerConfig } from "src/common/multer/multer.config";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { Express } from "express";
 
 @Controller('admin/area')
 export class AreaController {
