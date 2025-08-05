@@ -16,10 +16,15 @@ async function bootstrap() {
 
   // CORS 설정 추가
   app.enableCors({
-    origin: true, // 모든 origin 허용 (개발용)
+    origin: true,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
   });
 
-  await app.listen(process.env.PORT ?? 3000);
+  const port = process.env.PORT ?? 3000;
+
+  // 모든 인터페이스에서 접속 허용 (0.0.0.0)
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap();

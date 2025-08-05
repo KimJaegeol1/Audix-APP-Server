@@ -16,10 +16,21 @@ export class DeviceController {
         @Body() createRequestDeviceDto: CreateRequestDeviceDto,
         @UploadedFile() file: Express.Multer.File
     ) {
+        console.log('📤 POST /admin/device 요청 받음');
+        console.log('📝 Body:', createRequestDeviceDto);
+        console.log('📁 File:', file ? {
+            filename: file.filename,
+            originalname: file.originalname,
+            path: file.path,
+            size: file.size
+        } : 'No file uploaded');
+
         if (file) {
             const imagePath = `/images/${file.filename}`;
             createRequestDeviceDto.image = imagePath;
+            console.log('✅ Image path set:', imagePath);
         }
+
         return this.deviceService.create(createRequestDeviceDto);
     }
     @Get('list')

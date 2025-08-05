@@ -7,8 +7,9 @@ export class CreateDeviceDto {
     image?: string;
 
     static to(dto: CreateDeviceDto) {
+        console.log('🔍 DTO areaId:', dto.areaId, typeof dto.areaId);
         return {
-            area_id: dto.areaId ?? null,
+            area_id: dto.areaId ? parseInt(dto.areaId.toString()) : null,
             name: dto.name,
             address: dto.address,
             explain: dto.explain ?? null,
@@ -17,7 +18,6 @@ export class CreateDeviceDto {
         }
     }
 }
-
 export class CreateResultDeviceDto {
     name: string;
     isSuccess: boolean;
