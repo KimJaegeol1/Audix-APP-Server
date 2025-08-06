@@ -7,6 +7,7 @@ import { CreateAreaDto } from "../domain/dto/CreateAreaDto";
 export class AreaRepository {
     constructor(private readonly prisma: PrismaService) { }
 
+    //---CREATE---
     async createArea(createAreaDto: CreateAreaDto, tx: Prisma.TransactionClient = this.prisma): Promise<Boolean> {
         const areaData = CreateAreaDto.to(createAreaDto);
         await tx.areas.create({
@@ -14,23 +15,21 @@ export class AreaRepository {
         })
         return true;
     }
-
+    //---READ---
     async getAreaById(id: number): Promise<areas | null> {
         const areaInfo = await this.prisma.areas.findUnique({
             where: { id: id },
         })
         return areaInfo;
     }
-
-    async getAreaList(page: number, limit: number): Promise<areas[]> {
+    async getAreaListAll(page: number, limit: number): Promise<areas[]> {
         const areaList = await this.prisma.areas.findMany({
             skip: page * limit,
             take: limit,
         });
         return areaList;
     }
-
-    async getAreasByUserId(userId: number): Promise<areas[]> {
+    async getAreaListByUserId(userId: number): Promise<areas[]> {
         const areas = await this.prisma.areas.findMany({
             where: {
                 user_area: {
@@ -42,8 +41,34 @@ export class AreaRepository {
         });
         return areas;
     }
-
-    async deleteAreaALL(): Promise<Boolean> {
+    //---UPDATE---
+    async updateAreaByAreaId(id: number, updateData: Partial<CreateAreaDto>): Promise<Boolean> {
+        await this.prisma.areas.update({
+            where: { id: id },
+            data: updateData
+        });
+        return true;
+    }
+    //---DELETE---
+    async deleteAreaByAreaId(id: number): Promise<Boolean> {
+        await this.prisma.areas.delete({
+            where: { id: id }
+        });
+        return true;
+    }
+    async deleteAreaByUserId(userId: number): Promise<Boolean> {
+        await this.prisma.areas.deleteMany({
+            where: {
+                user_area: {
+                    some: {
+                        user_id: userId
+                    }
+                }
+            }
+        });
+        return true;
+    }
+    async deleteAreaAll(): Promise<Boolean> {
         await this.prisma.areas.deleteMany();
         return true;
     }

@@ -34,6 +34,8 @@ model teams {
   companys   companys? @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users      users?    @relation(fields: [leader_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
+  @@index([company_id], map: "idx_teams_company_id")
+  @@index([leader_id], map: "idx_teams_leader_id")
   @@schema("account")
 }
 
@@ -55,6 +57,7 @@ model users {
   companys      companys?   @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user_area     user_area[]
 
+  @@index([team_id], map: "idx_users_team_id")
   @@schema("account")
 }
 
@@ -66,6 +69,8 @@ model user_area {
   users      users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([user_id, area_id])
+  @@index([area_id], map: "idx_user_area_area_id")
+  @@index([user_id], map: "idx_user_area_user_id")
   @@schema("mapping")
 }
 
@@ -85,16 +90,20 @@ model areas {
 }
 
 model devices {
-  id         Int       @id @default(autoincrement())
-  area_id    Int?
-  name       String    @unique @db.VarChar(20)
-  address    String    @unique @db.VarChar(50)
-  explain    String?   @db.VarChar(255)
-  status     String?   @db.VarChar(255)
-  image      String?   @db.VarChar(255)
-  created_at DateTime? @default(now()) @db.Timestamp(6)
-  updated_at DateTime? @default(now()) @db.Timestamp(6)
-  areas      areas?    @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id             Int       @id @default(autoincrement())
+  area_id        Int?
+  name           String    @db.VarChar(50)
+  address        String    @unique @db.VarChar(50)
+  explain        String?   @db.VarChar(255)
+  status         String?   @db.VarChar(255)
+  image          String?   @db.VarChar(255)
+  created_at     DateTime? @default(now()) @db.Timestamp(6)
+  updated_at     DateTime? @default(now()) @db.Timestamp(6)
+  parts          String[]
+  model          String?   @db.VarChar(50)
+  device_manager String?   @db.VarChar(20)
+  areas          areas?    @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
+  @@index([area_id], map: "idx_devices_area_id")
   @@schema("site")
 }

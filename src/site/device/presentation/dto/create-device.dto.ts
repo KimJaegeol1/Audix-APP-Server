@@ -5,4 +5,5 @@ export class CreateRequestDeviceDto {
     explain?: string;
     status?: string;
     image?: string;
+    parts: string[]
 }

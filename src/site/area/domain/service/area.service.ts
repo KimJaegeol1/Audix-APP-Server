@@ -11,12 +11,14 @@ export class AreaService {
         private readonly areaRepository: AreaRepository
     ) { }
 
+    //---CREATE---
     async create(createRequestAreaDto: CreateRequestAreaDto):
         Promise<CreateResultAreaDto> {
         const { name, address, explain, status, image } = createRequestAreaDto;
 
         const result: boolean = await this.prisma.$transaction(async (tx) => {
             const createAreaDto = new CreateAreaDto();
+            // 중복체크 넣어야 한다.
             createAreaDto.name = name;
             createAreaDto.address = address;
             createAreaDto.explain = explain;
@@ -33,7 +35,7 @@ export class AreaService {
             isSuccess: result
         })
     }
-
+    //---READ---
     async findOne(id: number): Promise<object> {
         const area = await this.areaRepository.getAreaById(id);
         if (!area) {
@@ -42,21 +44,44 @@ export class AreaService {
         return area;
     }
 
-    async findList(page: number, limit: number): Promise<object[]> {
-        const areaList = await this.areaRepository.getAreaList(page, limit);
+    async findAll(page: number, limit: number): Promise<object[]> {
+        const areaList = await this.areaRepository.getAreaListAll(page, limit);
         return areaList;
     }
-
     async findListByUserId(userId: number): Promise<object[]> {
-        const areas = await this.areaRepository.getAreasByUserId(userId);
+        const areas = await this.areaRepository.getAreaListByUserId(userId);
         if (!areas || areas.length === 0) {
             throw new NotFoundException(`해당하는 사용자의 지역이 없습니다. User ID: ${userId}`);
         }
         return areas;
     }
-
+    //---UPDATE---
+    async updateAreaByAreaId(id: number, updateData: Partial<CreateAreaDto>): Promise<boolean> {
+        const area = await this.areaRepository.getAreaById(id);
+        if (!area) {
+            throw new NotFoundException(`해당하는 지역이 없습니다. ID: ${id}`);
+        }
+        await this.areaRepository.updateAreaByAreaId(id, updateData);
+        return true;
+    }
+    //---DELETE---
+    async deleteAreaByAreaId(id: number): Promise<boolean> {
+        const area = await this.areaRepository.getAreaById(id);
+        if (!area) {
+            throw new NotFoundException(`해당하는 지역이 없습니다. ID: ${id}`);
+        }
+        await this.areaRepository.deleteAreaByAreaId(id);
+        return true;
+    }
+    async deleteAreaByUserId(userId: number): Promise<boolean> {
+        const areas = await this.areaRepository.getAreaListByUserId(userId);
+        if (!areas || areas.length === 0) {
+            throw new NotFoundException(`해당하는 사용자의 지역이 없습니다. User ID: ${userId}`);
+        }
+        return true;
+    }
     async deleteAreaALL(): Promise<any> {
-        const result = await this.areaRepository.deleteAreaALL();
+        const result = await this.areaRepository.deleteAreaAll();
         return result;
     }
 }

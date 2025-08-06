@@ -8,8 +8,11 @@ import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller('admin/device')
 export class DeviceController {
-    constructor(private readonly deviceService: DeviceService) { }
+    constructor(
+        private readonly deviceService: DeviceService
+    ) { }
 
+    //---CREATE---
     @Post('')
     @UseInterceptors(FileInterceptor('image', multerConfig))
     create(
@@ -33,6 +36,7 @@ export class DeviceController {
 
         return this.deviceService.create(createRequestDeviceDto);
     }
+    //---READ---
     @Get('list')
     findAll(@Query('page', new DefaultValuePipe(NUMBER_CONSTANTS.DEFAULT_PAGE), ParseIntPipe) page: number, @Query('limit', new DefaultValuePipe(NUMBER_CONSTANTS.DEFAULT_LIMIT), ParseIntPipe) limit: number) {
         return this.deviceService.findList(page, limit);
@@ -45,6 +49,7 @@ export class DeviceController {
     findListByAreaId(@Param('areaId', ParseIntPipe) areaId: number) {
         return this.deviceService.findListByAreaId(areaId);
     }
+    //---DELETE---
     @Delete('all')
     deleteDeviceALL() {
         return this.deviceService.deleteDeviceALL();
@@ -57,10 +62,12 @@ export class DeviceInRedisController {
         private readonly deviceInRedisService: DeviceInRedisService
     ) { }
 
+    //---CREATE---
     @Post('')
     createDeviceInRedis(@Body() deviceDataInRedis: DeviceDataInRedis) {
         return this.deviceInRedisService.createDeviceInRedis(deviceDataInRedis);
     }
+    //---READ---
     @Get('all')
     findAllDevicesFromRedis() {
         return this.deviceInRedisService.findAllDevicesInRedis();
@@ -73,6 +80,7 @@ export class DeviceInRedisController {
     findDeviceFromRedisByDeviceId(@Param('deviceId', ParseIntPipe) deviceId: number) {
         return this.deviceInRedisService.findDeviceInRedisByDeviceId(deviceId);
     }
+    //---DELETE---
     @Delete('all')
     deleteAllDevicesInRedis() {
         return this.deviceInRedisService.deleteDeviceInRedisAll();
