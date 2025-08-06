@@ -18,7 +18,6 @@ model companys {
   created_at DateTime? @default(now()) @db.Timestamp(6)
   updated_at DateTime? @default(now()) @db.Timestamp(6)
   teams      teams[]
-  users      users[]
 
   @@schema("account")
 }
@@ -26,16 +25,14 @@ model companys {
 model teams {
   id         Int       @id @default(autoincrement())
   company_id Int?
-  leader_id  Int?
   explain    String?   @db.VarChar(255)
   name       String    @db.VarChar(20)
   created_at DateTime? @default(now()) @db.Timestamp(6)
   updated_at DateTime? @default(now()) @db.Timestamp(6)
   companys   companys? @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users      users?    @relation(fields: [leader_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users      users[]
 
   @@index([company_id], map: "idx_teams_company_id")
-  @@index([leader_id], map: "idx_teams_leader_id")
   @@schema("account")
 }
 
@@ -53,8 +50,7 @@ model users {
   refresh_token String?     @db.VarChar(255)
   created_at    DateTime?   @default(now()) @db.Timestamp(6)
   updated_at    DateTime?   @default(now()) @db.Timestamp(6)
-  teams         teams[]
-  companys      companys?   @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  companys      teams?      @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user_area     user_area[]
 
   @@index([team_id], map: "idx_users_team_id")
@@ -80,9 +76,9 @@ model areas {
   address    String      @unique @db.VarChar(50)
   explain    String?     @db.VarChar(255)
   status     String?     @db.VarChar(255)
+  image      String?     @db.VarChar(255)
   created_at DateTime?   @default(now()) @db.Timestamp(6)
   updated_at DateTime?   @default(now()) @db.Timestamp(6)
-  image      String?     @db.VarChar(255)
   user_area  user_area[]
   devices    devices[]
 
@@ -92,16 +88,16 @@ model areas {
 model devices {
   id             Int       @id @default(autoincrement())
   area_id        Int?
-  name           String    @unique(map: "devices_name_unique") @db.VarChar(50)
+  name           String    @unique @db.VarChar(50)
+  model          String    @db.VarChar(50)
+  device_manager String    @db.VarChar(20)
   address        String    @unique @db.VarChar(50)
   explain        String?   @db.VarChar(255)
   status         String?   @db.VarChar(255)
   image          String?   @db.VarChar(255)
+  parts          String[]
   created_at     DateTime? @default(now()) @db.Timestamp(6)
   updated_at     DateTime? @default(now()) @db.Timestamp(6)
-  parts          String[]
-  model          String?   @db.VarChar(50)
-  device_manager String?   @db.VarChar(20)
   areas          areas?    @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([area_id], map: "idx_devices_area_id")
