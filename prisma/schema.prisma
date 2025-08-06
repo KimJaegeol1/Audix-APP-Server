@@ -92,7 +92,7 @@ model areas {
 model devices {
   id             Int       @id @default(autoincrement())
   area_id        Int?
-  name           String    @db.VarChar(50)
+  name           String    @unique(map: "devices_name_unique") @db.VarChar(50)
   address        String    @unique @db.VarChar(50)
   explain        String?   @db.VarChar(255)
   status         String?   @db.VarChar(255)
