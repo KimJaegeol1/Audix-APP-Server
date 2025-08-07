@@ -6,4 +6,5 @@ export const NUMBER_CONSTANTS = {
     DEFAULT_TIMEOUT: 5000, // in milliseconds
     MAX_RETRIES: 3,
     RETRY_DELAY: 1000, // in milliseconds
+    DEFAULT_DEVICE_NORMAL_SCORE: 0.8
 }

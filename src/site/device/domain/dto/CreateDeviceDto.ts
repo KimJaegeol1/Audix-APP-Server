@@ -12,10 +12,10 @@ export class CreateDeviceDto {
     static to(dto: CreateDeviceDto) {
         console.log('🔍 DTO areaId:', dto.areaId, typeof dto.areaId);
         return {
-            areaId: dto.areaId ? Number(dto.areaId) : undefined, // areaId를 number로 변환
+            area_id: dto.areaId ? Number(dto.areaId) : undefined, // areaId를 number로 변환
             name: dto.name,
             model: dto.model,
-            deviceManager: dto.deviceManager,
+            device_manager: dto.deviceManager,
             address: dto.address,
             explain: dto.explain ?? null,
             status: dto.status ?? null,

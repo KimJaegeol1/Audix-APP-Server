@@ -56,7 +56,7 @@ export class AreaService {
         return areas;
     }
     //---UPDATE---
-    async updateAreaByAreaId(id: number, updateData: Partial<CreateAreaDto>): Promise<boolean> {
+    async update(id: number, updateData: Partial<CreateAreaDto>): Promise<boolean> {
         const area = await this.areaRepository.getAreaById(id);
         if (!area) {
             throw new NotFoundException(`해당하는 지역이 없습니다. ID: ${id}`);
@@ -65,7 +65,7 @@ export class AreaService {
         return true;
     }
     //---DELETE---
-    async deleteAreaByAreaId(id: number): Promise<boolean> {
+    async delete(id: number): Promise<boolean> {
         const area = await this.areaRepository.getAreaById(id);
         if (!area) {
             throw new NotFoundException(`해당하는 지역이 없습니다. ID: ${id}`);
@@ -73,14 +73,14 @@ export class AreaService {
         await this.areaRepository.deleteAreaByAreaId(id);
         return true;
     }
-    async deleteAreaByUserId(userId: number): Promise<boolean> {
+    async deleteListByUserId(userId: number): Promise<boolean> {
         const areas = await this.areaRepository.getAreaListByUserId(userId);
         if (!areas || areas.length === 0) {
             throw new NotFoundException(`해당하는 사용자의 지역이 없습니다. User ID: ${userId}`);
         }
         return true;
     }
-    async deleteAreaALL(): Promise<any> {
+    async deleteALL(): Promise<any> {
         const result = await this.areaRepository.deleteAreaAll();
         return result;
     }

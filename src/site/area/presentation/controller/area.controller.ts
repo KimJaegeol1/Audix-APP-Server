@@ -41,16 +41,16 @@ export class AreaController {
     //---UPDATE---
     @Post(':id')
     updateAreaByAreaId(@Param('id', ParseIntPipe) id: number, @Body() updateData: Partial<CreateAreaDto>) {
-        return this.areaService.updateAreaByAreaId(id, updateData);
+        return this.areaService.update(id, updateData);
     }
     //---DELETE---
     @Delete('all')
-    deleteAreaALL() {
-        return this.areaService.deleteAreaALL();
+    deleteALL() {
+        return this.areaService.deleteALL();
     }
     @Delete(':id')
     deleteAreaById(@Param('id', ParseIntPipe) id: number) {
-        return this.areaService.deleteAreaByAreaId(id);
+        return this.areaService.deleteListByUserId(id);
     }
 
 }
