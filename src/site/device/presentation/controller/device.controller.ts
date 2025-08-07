@@ -2,10 +2,8 @@ import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePi
 import { CreateRequestDeviceDto } from "../dto/create-device.dto";
 import { DeviceService, DeviceInRedisService } from "../../domain/service/device.service";
 import { NUMBER_CONSTANTS } from "src/common/constants/number";
-import { DeviceInRedisRepository } from "../../infra/device.redis.repository";
 import { multerConfig } from "src/common/multer/multer.config";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { CreateDeviceInRedisDto } from "../../domain/dto/CreateDeviceInRedisDto";
 
 @Controller('admin/device')
 export class DeviceController {
@@ -67,32 +65,32 @@ export class DeviceInRedisController {
         private readonly deviceInRedisService: DeviceInRedisService
     ) { }
 
-    //---CREATE---
-    @Post('')
-    createDeviceInRedis(@Body() deviceDataInRedis: DeviceDataInRedis) {
-        return this.deviceInRedisService.createDeviceInRedis(deviceDataInRedis);
-    }
     //---READ---
     @Get('all')
-    findAllDevicesFromRedis() {
-        return this.deviceInRedisService.findAllDevicesInRedis();
+    findAll() {
+        return this.deviceInRedisService.findAll();
     }
-    @Get('area/:areaId')
-    findDeviceListFromRedisByAreaId(@Param('areaId', ParseIntPipe) areaId: number) {
-        return this.deviceInRedisService.findDeviceListInRedisByAreaId(areaId);
+    @Get('list/:areaId')
+    findListByAreaId(@Param('areaId', ParseIntPipe) areaId: number) {
+        return this.deviceInRedisService.findListByAreaId(areaId);
     }
-    @Get(':deviceId')
-    findDeviceFromRedisByDeviceId(@Param('deviceId', ParseIntPipe) deviceId: number) {
-        return this.deviceInRedisService.findDeviceInRedisByDeviceId(deviceId);
+    @Get(':id')
+    findOne(@Param('id', ParseIntPipe) id: number) {
+        return this.deviceInRedisService.findOne(id);
     }
+    //---UPDATE--- // 아직 미구현
     //---DELETE---
     @Delete('all')
-    deleteAllDevicesInRedis() {
-        return this.deviceInRedisService.deleteDeviceInRedisAll();
+    deleteALL() {
+        return this.deviceInRedisService.deleteALL();
     }
-    @Delete(':deviceId')
-    deleteDeviceInRedisByDeviceId(@Param('deviceId', ParseIntPipe) deviceId: number) {
-        return this.deviceInRedisService.deleteDeviceInRedisByDeviceId(deviceId);
+    @Delete('list/:areaId')
+    deleteListByAreaId(@Param('areaId', ParseIntPipe) areaId: number) {
+        return this.deviceInRedisService.deleteListByAreaId(areaId);
+    }
+    @Delete(':id')
+    delete(@Param('id', ParseIntPipe) id: number) {
+        return this.deviceInRedisService.delete(id);
     }
 
 }
