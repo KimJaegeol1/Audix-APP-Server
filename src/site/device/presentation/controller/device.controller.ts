@@ -41,16 +41,12 @@ export class DeviceController {
     //---UPDATE--- // 아직 미구현
     //---DELETE---
     @Delete('list/:areaId')
-    delteListByAreaId(@Param('areaId', ParseIntPipe) areaId: number) {
-        return this.deviceService.delteListByAreaId(areaId);
+    deleteListByAreaId(@Param('areaId', ParseIntPipe) areaId: number) {
+        return this.deviceService.deleteListByAreaId(areaId);
     }
     @Delete('all')
     deleteALL() {
         return this.deviceService.deleteALL();
-    }
-    @Delete('/list/:areaId')
-    deleteListByAreaId(@Param('areaId', ParseIntPipe) areaId: number) {
-        return this.deviceService.deleteListByAreaId(areaId);
     }
     @Delete(':id')
     delete(@Param('id', ParseIntPipe) id: number) {
