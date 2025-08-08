@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { RedisModule } from './common/db/redis.moudle';
+import { RedisModule } from './common/db/redis.module';
 import { RedisPubSubModule } from './alarm/redis-pubsub/redis-pubsub.module';
 import { TestController } from './alarm/test/test.controller';
 
