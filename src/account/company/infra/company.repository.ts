@@ -29,12 +29,12 @@ export class CompanyRepository {
         return companyList;
     }
     //---UPDATE---
-    async updateCompanyById(id: number, updateData: Partial<CreateCompanyDto>, tx: Prisma.TransactionClient = this.prisma): Promise<companys> {
-        const updatedCompany = await tx.companys.update({
+    async updateCompanyById(id: number, updateData: Partial<CreateCompanyDto>, tx: Prisma.TransactionClient = this.prisma): Promise<boolean> {
+        await tx.companys.update({
             where: { id: id },
             data: updateData
         });
-        return updatedCompany;
+        return true;
     }
     //---DELETE---
     async deleteCompanyById(id: number, tx: Prisma.TransactionClient = this.prisma): Promise<Boolean> {
