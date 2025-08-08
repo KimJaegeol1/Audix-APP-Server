@@ -88,10 +88,6 @@ export class DeviceInRedisRepository {
     async updateDevice(id: number, updateData: Partial<CreateDeviceInRedisDto>): Promise<Boolean> {
         const deviceKey = `device:${id}`;
         const exists = await this.redis.exists(deviceKey);
-
-        if (!exists) {
-            throw new Error("존재하지 않는 기기입니다.");
-        }
         // 아직 미구현
 
         return true
@@ -99,12 +95,6 @@ export class DeviceInRedisRepository {
     //---DELETE---
     async deleteDeviceByDeviceId(id: number): Promise<Boolean> {
         const deviceKey = `device:${id}`;
-        const exists = await this.redis.exists(deviceKey);
-
-        if (!exists) {
-            throw new Error("존재하지 않는 기기입니다.");
-        }
-
         await this.redis.del(deviceKey)
 
         return true

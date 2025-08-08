@@ -3,7 +3,6 @@ import { CreateRequestUserDto } from "../../presentation/dto/create-user.dto";
 import { CreateResultUserDto, CreateUserDto } from "../dto/CreateUserDto";
 import { PrismaService } from "src/common/db/prisma.service";
 import { UserRepository } from "../../infra/user.repository";
-import { users } from "generated/prisma";
 
 @Injectable()
 export class UserService {

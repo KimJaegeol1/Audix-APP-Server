@@ -8,9 +8,8 @@ export class UserRepository {
     constructor(private readonly prisma: PrismaService) { }
 
     async createUser(createUserDto: CreateUserDto, tx: Prisma.TransactionClient = this.prisma): Promise<Boolean> {
-        const userData = CreateUserDto.to(createUserDto);
         await tx.users.create({
-            data: userData
+            data: CreateUserDto.to(createUserDto)
         });
         return true;
     }

@@ -9,9 +9,8 @@ export class AreaRepository {
 
     //---CREATE---
     async createArea(createAreaDto: CreateAreaDto, tx: Prisma.TransactionClient = this.prisma): Promise<Boolean> {
-        const areaData = CreateAreaDto.to(createAreaDto);
         await tx.areas.create({
-            data: areaData
+            data: CreateAreaDto.to(createAreaDto)
         })
         return true;
     }

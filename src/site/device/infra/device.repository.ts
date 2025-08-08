@@ -9,11 +9,10 @@ export class DeviceRepository {
 
     //---CREATE---
     async createDevice(createDeviceDto: CreateDeviceDto, tx: Prisma.TransactionClient = this.prisma): Promise<devices> {
-        const deviceData = CreateDeviceDto.to(createDeviceDto);
         const createdDevice = await tx.devices.create({
-            data: deviceData
+            data: CreateDeviceDto.to(createDeviceDto)
         })
-        return createdDevice; // 생성된 device 객체 반환
+        return createdDevice;   // 반환된 device 객체
     }
     //---READ---
     async getDeviceByDeviceId(id: number): Promise<devices | null> {
