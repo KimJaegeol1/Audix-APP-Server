@@ -6,8 +6,6 @@ export class CreateUserDto {
     email: string;
     phone: string;
     position: string;
-    isActive?: boolean;
-    refreshToken?: string;
 
     static to(dto: CreateUserDto) {
         return {
@@ -18,8 +16,6 @@ export class CreateUserDto {
             email: dto.email,
             phone: dto.phone,
             position: dto.position,
-            is_active: dto.isActive ?? null,
-            refresh_token: dto.refreshToken ?? null
         }
     }
 }

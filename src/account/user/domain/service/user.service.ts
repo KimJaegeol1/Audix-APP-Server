@@ -11,8 +11,9 @@ export class UserService {
         private readonly userRepository: UserRepository
     ) { }
 
+    //--CREATE--
     async create(createRequestUserDto: CreateRequestUserDto): Promise<CreateResultUserDto> {
-        const { teamId, loginCode, password, name, email, phone, position, isActive, refreshToken } = createRequestUserDto;
+        const { teamId, loginCode, password, name, email, phone, position } = createRequestUserDto;
         // 제약조건 검사해야함
 
         // 트랜잭션 시작
@@ -25,8 +26,6 @@ export class UserService {
             createUserDto.email = email;
             createUserDto.phone = phone;
             createUserDto.position = position;
-            createUserDto.isActive = isActive;
-            createUserDto.refreshToken = refreshToken;
 
             await this.userRepository.createUser(createUserDto, tx);
 
@@ -38,7 +37,7 @@ export class UserService {
             isSuccess: result
         })
     }
-
+    //---READ---
     async findOne(id: number): Promise<object> {
         const user = await this.userRepository.getUserById(id);
         if (!user) {
@@ -46,9 +45,42 @@ export class UserService {
         }
         return user;
     }
-
-    async findList(page: number, limit: number): Promise<object[]> {
-        const userList = await this.userRepository.getUserList(page, limit);
+    async findAll(page: number, limit: number): Promise<object[]> {
+        const userList = await this.userRepository.getAllUser(page, limit);
         return userList;
+    }
+    async findListByTeamId(teamId: number): Promise<object[]> {
+        const userList = await this.userRepository.getUserByTeamId(teamId);
+        return userList;
+    }
+    //---UPDATE---
+    async update(id: number, updateData: Partial<CreateUserDto>): Promise<boolean> {
+        const user = await this.userRepository.getUserById(id);
+
+        if (!user) {
+            throw new NotFoundException(`해당하는 유저가 없습니다. ID: ${id}`);
+        }
+
+        const result: boolean = await this.prisma.$transaction(async (tx) => {
+            await this.userRepository.updateUserById(id, updateData, tx);
+
+            return true;
+        });
+
+        return result;
+    }
+    //---DELETE---
+    async delete(id: number): Promise<boolean> {
+        const user = await this.userRepository.getUserById(id);
+        if (!user) {
+            throw new NotFoundException(`해당하는 유저가 없습니다. ID: ${id}`);
+        }
+
+        const result: boolean = await this.prisma.$transaction(async (tx) => {
+            await this.userRepository.deleteUserById(id, tx);
+            return true;
+        });
+
+        return result;
     }
 }

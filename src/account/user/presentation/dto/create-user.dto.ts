@@ -6,6 +6,4 @@ export class CreateRequestUserDto {
     email: string;
     phone: string;
     position: string;
-    isActive?: boolean;
-    refreshToken?: string;
 }

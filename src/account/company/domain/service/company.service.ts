@@ -47,13 +47,34 @@ export class CompanyService {
         return companyList;
     }
     //---UPDATE---
-    async update(id: number, updateData: Partial<CreateCompanyDto>): Promise<object> {
-        const result = await this.companyRepository.updateCompanyById(id, updateData);
+    async update(id: number, updateData: Partial<CreateCompanyDto>): Promise<boolean> {
+        const company = await this.companyRepository.getCompanyById(id);
+
+        if (!company) {
+            throw new NotFoundException(`해당하는 회사가 없습니다. ID: ${id}`);
+        }
+
+        const result: boolean = await this.prisma.$transaction(async (tx) => {
+            await this.companyRepository.updateCompanyById(id, updateData, tx);
+
+            return true;
+        });
+
         return result;
     }
     //---DELETE---
     async delete(id: number): Promise<boolean> {
-        const result = await this.companyRepository.deleteCompanyById(id);
-        return true;
+        const company = await this.companyRepository.getCompanyById(id);
+
+        if (!company) {
+            throw new NotFoundException(`해당하는 회사가 없습니다. ID: ${id}`);
+        }
+
+        const result: boolean = await this.prisma.$transaction(async (tx) => {
+            await this.companyRepository.deleteCompanyById(id, tx);
+            return true;
+        });
+
+        return result;
     }
 }
