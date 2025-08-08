@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe, Delete, UseInterceptors, UploadedFile } from "@nestjs/common";
+import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe, Delete } from "@nestjs/common";
 import { CreateRequestCompanyDto } from "../dto/create-compnay.dto";
 import { CompanyService } from "../../domain/service/company.service";
 import { NUMBER_CONSTANTS } from "src/common/constants/number";

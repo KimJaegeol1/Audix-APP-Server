@@ -13,8 +13,8 @@ export class CreateCompanyDto {
 }
 
 export class createResultCompanyDto {
-    name: string
-    isSuccess: boolean
+    name: string;
+    isSuccess: boolean;
 
     constructor(init: { name: string, isSuccess: boolean }) {
         this.name = init.name;

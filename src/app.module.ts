@@ -8,12 +8,13 @@ import { AreaModule } from './site/area/area.module';
 import { DeviceModule } from './site/device/device.module';
 import { MappingModule } from './mapping/mapping.module';
 import { CompanyModule } from './account/company/company.module';
+import { TeamModule } from './account/team/team.module';
 
 import { MulterModule } from '@nestjs/platform-express';
 import { multerConfig } from './common/multer/multer.config';
 
 @Module({
-  imports: [RedisModule, RedisPubSubModule, UserModule, AreaModule, DeviceModule, MappingModule, MulterModule.register(multerConfig), CompanyModule],
+  imports: [RedisModule, RedisPubSubModule, UserModule, AreaModule, DeviceModule, MappingModule, MulterModule.register(multerConfig), CompanyModule, TeamModule],
   controllers: [TestController],
 })
 export class AppModule { }
