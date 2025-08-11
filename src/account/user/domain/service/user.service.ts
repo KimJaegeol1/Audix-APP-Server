@@ -3,6 +3,7 @@ import { CreateRequestUserDto } from "../../presentation/dto/create-user.dto";
 import { CreateResultUserDto, CreateUserDto } from "../dto/CreateUserDto";
 import { PrismaService } from "src/common/db/prisma.service";
 import { UserRepository } from "../../infra/user.repository";
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -14,14 +15,17 @@ export class UserService {
     //--CREATE--
     async create(createRequestUserDto: CreateRequestUserDto): Promise<CreateResultUserDto> {
         const { teamId, loginCode, password, name, email, phone, position } = createRequestUserDto;
-        // 제약조건 검사해야함
+
+        // bcrypt로 비밀번호 해싱
+        const saltRounds = 10; // 해싱 강도 ( 10이 일반적으로 적절 )
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         // 트랜잭션 시작
         const result: boolean = await this.prisma.$transaction(async (tx) => {
             const createUserDto = new CreateUserDto();
             createUserDto.teamId = teamId;
             createUserDto.loginCode = loginCode;
-            createUserDto.password = password;
+            createUserDto.password = hashedPassword;
             createUserDto.name = name;
             createUserDto.email = email;
             createUserDto.phone = phone;
