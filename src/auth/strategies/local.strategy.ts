@@ -1,7 +1,7 @@
 import { Strategy } from "passport-local";
 import { PassportStrategy } from "@nestjs/passport";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
-import { AuthService } from "../auth.service";
+import { AuthService } from "../service/auth.service";
 
 // LocalStrategy - 로그인 시 실행되는 코드
 @Injectable()

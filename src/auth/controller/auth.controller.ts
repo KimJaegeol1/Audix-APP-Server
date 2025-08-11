@@ -8,10 +8,10 @@ import {
     HttpStatus,
     HttpCode
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './guards/local-auth.guard';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { LoginDto, RefreshTokenDto } from './auth.dto';
+import { AuthService } from '../service/auth.service';
+import { LocalAuthGuard } from '../guards/local-auth.guard';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { LoginDto, RefreshTokenDto } from '../dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
