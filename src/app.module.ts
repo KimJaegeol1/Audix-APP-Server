@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { RedisModule } from './common/db/redis.module';
 import { RedisPubSubModule } from './alarm/redis-pubsub/redis-pubsub.module';
 import { TestController } from './alarm/test/test.controller';
@@ -15,7 +16,10 @@ import { MulterModule } from '@nestjs/platform-express';
 import { multerConfig } from './common/multer/multer.config';
 
 @Module({
-  imports: [RedisModule, RedisPubSubModule, UserModule, AreaModule, DeviceModule, MappingModule, MulterModule.register(multerConfig), CompanyModule, TeamModule, AuthModule],
+  imports: [RedisModule, RedisPubSubModule, UserModule, AreaModule, DeviceModule, MappingModule, MulterModule.register(multerConfig), CompanyModule, TeamModule, AuthModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    })],
   controllers: [TestController],
 })
 export class AppModule { }

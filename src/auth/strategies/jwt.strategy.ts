@@ -1,16 +1,25 @@
 import { Strategy, ExtractJwt } from "passport-jwt";
 import { PassportStrategy } from "@nestjs/passport";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { ConfigService } from '@nestjs/config';
 
 // JwtStrategy - JWT 토큰 검증 시 실행되는 코드
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor() {
+        const jwtSecret = process.env.JWT_SECRET;
+
+        if (!jwtSecret) {
+            throw new Error('JWT_SECRET 환경변수가 설정되지 않았습니다!');
+        }
+
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: process.env.JWT_SECRET || 'your-secret-key'
+            secretOrKey: jwtSecret
         })
+
+        console.log('✅ JWT Strategy 초기화 완료');
     }
 
     async validate(payload: any) {

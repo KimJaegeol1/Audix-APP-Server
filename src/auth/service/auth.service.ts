@@ -21,7 +21,7 @@ export class AuthService {
         }
         return null;
     }
-    o
+
     async login(user: any) {
         const payload = new AuthPayload();
         payload.id = user.id;
