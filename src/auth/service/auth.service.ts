@@ -67,7 +67,13 @@ export class AuthService {
                 throw new UnauthorizedException("잘못된 요청입니다.")
             }
 
-            const newAccessToken = this.jwtService.sign({ id: user.id });
+            const newAccessToken = this.jwtService.sign(
+                payload,
+                {
+                    secret: process.env.JWT_SECRET,
+                    expiresIn: '1h'
+                }
+            );
 
             return {
                 accessToken: newAccessToken,
