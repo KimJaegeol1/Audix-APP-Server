@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/common/db/prisma.service";
 import { Prisma, users } from "@prisma/client";
 import { CreateUserDto } from "../domain/dto/CreateUserDto";
+import { SearchLoginCodeDto } from "../domain/dto/SearchUserDto";
 
 @Injectable()
 export class UserRepository {
@@ -33,6 +34,12 @@ export class UserRepository {
             where: { team_id: teamId },
         });
         return userList;
+    }
+    async getLoginCode(searchLoginCodeDto: SearchLoginCodeDto) {
+        const user = await this.prisma.users.findFirst({
+            where: searchLoginCodeDto
+        });
+        return user ? user.login_code : null;
     }
     //---UPDATE---
     async updateUserById(id: number, updateData: Partial<CreateUserDto>, tx: Prisma.TransactionClient = this.prisma): Promise<users> {

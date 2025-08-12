@@ -4,6 +4,8 @@ import { CreateResultUserDto, CreateUserDto } from "../dto/CreateUserDto";
 import { PrismaService } from "src/common/db/prisma.service";
 import { UserRepository } from "../../infra/user.repository";
 import * as bcrypt from 'bcrypt';
+import { SearchhLoginCodeRequestDto } from "../../presentation/dto/search-user.dto";
+import { SearchLoginCodeDto } from "../dto/SearchUserDto";
 
 @Injectable()
 export class UserService {
@@ -56,6 +58,14 @@ export class UserService {
     async findListByTeamId(teamId: number): Promise<object[]> {
         const userList = await this.userRepository.getUserByTeamId(teamId);
         return userList;
+    }
+    async findLoginCode(earchhLoginCodeRequestDto: SearchhLoginCodeRequestDto): Promise<string | null> {
+        const searchLoginCodeDto = new SearchLoginCodeDto();
+        searchLoginCodeDto.name = earchhLoginCodeRequestDto.name;
+        searchLoginCodeDto.email = earchhLoginCodeRequestDto.email;
+        searchLoginCodeDto.phone = earchhLoginCodeRequestDto.phone;
+
+        return this.userRepository.getLoginCode(searchLoginCodeDto);
     }
     //---UPDATE---
     async update(id: number, updateData: Partial<CreateUserDto>): Promise<boolean> {

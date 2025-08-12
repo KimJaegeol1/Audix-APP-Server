@@ -2,9 +2,29 @@ import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePi
 import { CreateRequestUserDto } from "../dto/create-user.dto";
 import { UserService } from "../../domain/service/user.service";
 import { NUMBER_CONSTANTS } from "src/common/constants/number";
+import { SearchhLoginCodeRequestDto } from "../dto/search-user.dto";
+
+@Controller('user')
+export class UserController {
+    constructor(private readonly userService: UserService) { }
+
+    @Get('search/login-code')
+    searchLoginCode(@Body() searchhLoginCodeRequestDto: SearchhLoginCodeRequestDto) {
+        return this.userService.findLoginCode(searchhLoginCodeRequestDto);
+    }
+
+    @Get('info/me')
+    infoMe() { }
+
+    @Get('info/team')
+    infoTeam() { }
+
+    @Put('password')
+    updatePassword() { }
+}
 
 @Controller('admin/user')
-export class UserController {
+export class UserAdminController {
     constructor(private readonly userService: UserService) { }
 
     //---CREATE---
