@@ -22,4 +22,16 @@ export class UserAreaService {
             isSuccess: result
         });
     }
+
+    async findAll(): Promise<object[]> {
+        return this.userAreaRepository.getAllInfo();
+    }
+
+    async deleteAll(): Promise<boolean> {
+        const result: boolean = await this.prisma.$transaction(async (tx) => {
+            return this.userAreaRepository.deleteAllUserArea(tx);
+        });
+        return result;
+    }
+
 }

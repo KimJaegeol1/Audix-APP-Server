@@ -15,11 +15,20 @@ export class UserAreaRepository {
         return true;
     }
 
+    async getAllInfo(): Promise<user_area[]> {
+        return this.prisma.user_area.findMany();
+    }
+
     async getInfoByUserId(userId: number): Promise<user_area[]> {
         const userAreaInfo = await this.prisma.user_area.findMany({
             where: { user_id: userId },
         });
         return userAreaInfo;
+    }
+
+    async deleteAllUserArea(tx: Prisma.TransactionClient = this.prisma): Promise<boolean> {
+        await tx.user_area.deleteMany();
+        return true;
     }
 
 }
