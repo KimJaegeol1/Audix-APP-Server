@@ -1,26 +1,32 @@
-import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe, Put, Delete } from "@nestjs/common";
+import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe, Put, Delete, UseGuards, Request, HttpStatus, HttpCode } from "@nestjs/common";
 import { CreateRequestUserDto } from "../dto/create-user.dto";
 import { UserService } from "../../domain/service/user.service";
 import { NUMBER_CONSTANTS } from "src/common/constants/number";
 import { SearchhLoginCodeRequestDto } from "../dto/search-user.dto";
+import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
+
 
 @Controller('user')
 export class UserController {
     constructor(private readonly userService: UserService) { }
 
     @Get('search/login-code')
-    searchLoginCode(@Body() searchhLoginCodeRequestDto: SearchhLoginCodeRequestDto) {
+    async searchLoginCode(@Body() searchhLoginCodeRequestDto: SearchhLoginCodeRequestDto) {
         return this.userService.findLoginCode(searchhLoginCodeRequestDto);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get('info/me')
-    infoMe() { }
+    @HttpCode(HttpStatus.OK)
+    async infoMe(@Request() req) {
+        return this.userService.findOne(req.user.id);
+    }
 
     @Get('info/team')
-    infoTeam() { }
+    async infoTeam() { }
 
     @Put('password')
-    updatePassword() { }
+    async updatePassword() { }
 }
 
 @Controller('admin/user')
@@ -29,7 +35,7 @@ export class UserAdminController {
 
     //---CREATE---
     @Post('')
-    create(@Body() createRequestUserDto: CreateRequestUserDto) {
+    async create(@Body() createRequestUserDto: CreateRequestUserDto) {
         return this.userService.create(createRequestUserDto)
     }
     //---READ---
@@ -38,17 +44,17 @@ export class UserAdminController {
         return this.userService.findAll(page, limit);
     }
     @Get("list/:teamId")
-    findListByTeam(@Param('teamId', ParseIntPipe) teamId: number) {
+    async findListByTeam(@Param('teamId', ParseIntPipe) teamId: number) {
         return this.userService.findListByTeamId(teamId);
     }
     @Get(':id')
-    findOne(@Param('id', ParseIntPipe) id: number) {
+    async findOne(@Param('id', ParseIntPipe) id: number) {
         return this.userService.findOne(id);
     }
     //---UPDATE---
     //---DELETE---
     @Delete(':id')
-    delete(@Param('id', ParseIntPipe) id: number) {
+    async delete(@Param('id', ParseIntPipe) id: number) {
         return this.userService.delete(id);
     }
 
