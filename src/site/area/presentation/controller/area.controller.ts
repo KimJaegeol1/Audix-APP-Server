@@ -1,19 +1,32 @@
-import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe, UseInterceptors, UploadedFile, Delete } from "@nestjs/common";
+import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, DefaultValuePipe, UseInterceptors, UploadedFile, Delete, UseGuards, Request, HttpStatus, HttpCode } from "@nestjs/common";
 import { CreateRequestAreaDto } from "../dto/create-area.dto";
 import { AreaService } from "../../domain/service/area.service";
 import { NUMBER_CONSTANTS } from "src/common/constants/number";
 import { multerConfig } from "src/common/multer/multer.config";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { CreateAreaDto } from "../../domain/dto/CreateAreaDto";
+import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
+
+@Controller('area')
+export class AreaController {
+    constructor(private readonly areaService: AreaService) { }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('list')
+    @HttpCode(HttpStatus.OK)
+    async findList(@Request() req) {
+        return this.areaService.findListByUserId(req.user.id);
+    }
+}
 
 @Controller('admin/area')
-export class AreaController {
+export class AreaAdminController {
     constructor(private readonly areaService: AreaService) { }
 
     //---CREATE---
     @Post('')
     @UseInterceptors(FileInterceptor('image', multerConfig))
-    create(
+    async create(
         @Body() createRequestAreaDto: CreateRequestAreaDto, @UploadedFile() file: Express.Multer.File
     ) {
         // 이미지 파일이 업로드된 경우 경로를 저장
@@ -27,29 +40,29 @@ export class AreaController {
     }
     //---READ---
     @Get('all')
-    findAll(@Query('page', new DefaultValuePipe(NUMBER_CONSTANTS.DEFAULT_PAGE), ParseIntPipe) page: number, @Query('limit', new DefaultValuePipe(NUMBER_CONSTANTS.DEFAULT_LIMIT), ParseIntPipe) limit: number) {
+    async findAll(@Query('page', new DefaultValuePipe(NUMBER_CONSTANTS.DEFAULT_PAGE), ParseIntPipe) page: number, @Query('limit', new DefaultValuePipe(NUMBER_CONSTANTS.DEFAULT_LIMIT), ParseIntPipe) limit: number) {
         return this.areaService.findAll(page, limit);
     }
     @Get('list/:userId')
-    findListByUserId(@Param('userId', ParseIntPipe) userId: number) {
+    async findListByUserId(@Param('userId', ParseIntPipe) userId: number) {
         return this.areaService.findListByUserId(userId);
     }
     @Get(':id')
-    findOne(@Param('id', ParseIntPipe) id: number) {
+    async findOne(@Param('id', ParseIntPipe) id: number) {
         return this.areaService.findOne(id);
     }
     //---UPDATE---
     @Post(':id')
-    updateAreaByAreaId(@Param('id', ParseIntPipe) id: number, @Body() updateData: Partial<CreateAreaDto>) {
+    async updateAreaByAreaId(@Param('id', ParseIntPipe) id: number, @Body() updateData: Partial<CreateAreaDto>) {
         return this.areaService.update(id, updateData);
     }
     //---DELETE---
     @Delete('all')
-    deleteALL() {
+    async deleteALL() {
         return this.areaService.deleteALL();
     }
     @Delete(':id')
-    deleteAreaById(@Param('id', ParseIntPipe) id: number) {
+    async deleteAreaById(@Param('id', ParseIntPipe) id: number) {
         return this.areaService.deleteListByUserId(id);
     }
 
