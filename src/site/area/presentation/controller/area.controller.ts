@@ -15,7 +15,12 @@ export class AreaController {
     @Get('list')
     @HttpCode(HttpStatus.OK)
     async findList(@Request() req) {
-        return this.areaService.findListByUserId(req.user.id);
+        const result = await this.areaService.findListByUserId(req.user.id);
+        return {
+            statusCode: HttpStatus.OK,
+            message: '구역 목록 조회 성공',
+            data: result
+        };
     }
 }
 

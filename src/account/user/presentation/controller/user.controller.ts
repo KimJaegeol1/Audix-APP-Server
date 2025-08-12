@@ -12,14 +12,24 @@ export class UserController {
 
     @Get('search/login-code')
     async searchLoginCode(@Body() searchhLoginCodeRequestDto: SearchhLoginCodeRequestDto) {
-        return this.userService.findLoginCode(searchhLoginCodeRequestDto);
+        const result = await this.userService.findLoginCode(searchhLoginCodeRequestDto);
+        return {
+            statusCode: HttpStatus.OK,
+            message: '로그인 코드 찾기 성공',
+            data: result
+        };
     }
 
     @UseGuards(JwtAuthGuard)
     @Get('info/me')
     @HttpCode(HttpStatus.OK)
     async infoMe(@Request() req) {
-        return this.userService.findOne(req.user.id);
+        const result = await this.userService.findOne(req.user.id);
+        return {
+            statusCode: HttpStatus.OK,
+            message: '내 정보 조회 성공',
+            data: result
+        };
     }
 
     @Get('info/team')
