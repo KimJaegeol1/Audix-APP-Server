@@ -58,6 +58,7 @@ export class DeviceInRedisRepository {
             normalScore: parseFloat(data.normalScore),
             image: data.image,
             status: data.status,
+            aiText: data.aiText,
         };
     }
     async getDeviceListByAreaId(areaId: number): Promise<CreateDeviceInRedisDto[]> {
@@ -78,6 +79,7 @@ export class DeviceInRedisRepository {
                     normalScore: parseFloat(data.normalScore),
                     image: data.image,
                     status: data.status,
+                    aiText: data.aiText,
                 });
             }
         }

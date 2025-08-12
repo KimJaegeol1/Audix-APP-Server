@@ -9,4 +9,5 @@ export class CreateDeviceInRedisDto {
     normalScore: number;
     image?: string;
     status?: string;
+    aiText?: string;
 }

@@ -54,6 +54,7 @@ export class DeviceService {
             createDeviceInRedisDto.normalScore = NUMBER_CONSTANTS.DEFAULT_DEVICE_NORMAL_SCORE;
             createDeviceInRedisDto.image = createDevice.image ?? '';
             createDeviceInRedisDto.status = createDevice.status ?? '';
+            createDeviceInRedisDto.aiText = '';
 
             // Redis에 저장
             await this.deviceInRedisRepository.createDevice(createDeviceInRedisDto);
