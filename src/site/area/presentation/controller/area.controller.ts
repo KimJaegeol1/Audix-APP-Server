@@ -4,7 +4,6 @@ import { AreaService } from "../../domain/service/area.service";
 import { NUMBER_CONSTANTS } from "src/common/constants/number";
 import { multerConfig } from "src/common/multer/multer.config";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { CreateAreaDto } from "../../domain/dto/CreateAreaDto";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 
 @Controller('area')
@@ -57,10 +56,6 @@ export class AreaAdminController {
         return this.areaService.findOne(id);
     }
     //---UPDATE---
-    @Post(':id')
-    async updateAreaByAreaId(@Param('id', ParseIntPipe) id: number, @Body() updateData: Partial<CreateAreaDto>) {
-        return this.areaService.update(id, updateData);
-    }
     //---DELETE---
     @Delete('all')
     async deleteALL() {

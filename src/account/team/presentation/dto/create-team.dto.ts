@@ -1,5 +1,5 @@
 export class CreateRequestTeamDto {
-    CompanyId?: number;
+    companyId?: number;
     explain?: string;
     name: string;
 }

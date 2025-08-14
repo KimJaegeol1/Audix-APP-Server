@@ -2,7 +2,6 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "src/common/db/prisma.service";
 import * as bcrypt from 'bcrypt';
-import { AuthPayload } from "../dto/auth.payload";
 
 @Injectable()
 export class AuthService {
@@ -23,8 +22,9 @@ export class AuthService {
     }
 
     async login(user: any) {
-        const payload = new AuthPayload();
-        payload.id = user.id;
+        const payload = {
+            id: user.id,
+        };
 
         const accessToken = this.jwtService.sign(
             payload,
@@ -67,8 +67,12 @@ export class AuthService {
                 throw new UnauthorizedException("잘못된 요청입니다.")
             }
 
+            const newPayload = {
+                id: user.id,
+            };
+
             const newAccessToken = this.jwtService.sign(
-                payload,
+                newPayload,
                 {
                     secret: process.env.JWT_SECRET,
                     expiresIn: '1h'

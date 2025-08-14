@@ -10,7 +10,7 @@ import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 export class UserController {
     constructor(private readonly userService: UserService) { }
 
-    @Get('search/login-code')
+    @Post('search/login-code')
     async searchLoginCode(@Body() searchhLoginCodeRequestDto: SearchhLoginCodeRequestDto) {
         const result = await this.userService.findLoginCode(searchhLoginCodeRequestDto);
         return {

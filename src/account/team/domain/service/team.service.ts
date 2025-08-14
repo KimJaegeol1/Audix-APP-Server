@@ -13,11 +13,11 @@ export class TeamService {
 
     //---CREATE---
     async createTeam(createRequestTeamDto: CreateRequestTeamDto): Promise<CreateResultTeamDto> {
-        const { CompanyId, explain, name } = createRequestTeamDto;
+        const { companyId, explain, name } = createRequestTeamDto;
 
         const result: boolean = await this.prisma.$transaction(async (tx) => {
             const createTeamDto = new CreateTeamDto();
-            createTeamDto.companyId = CompanyId;
+            createTeamDto.companyId = companyId;
             createTeamDto.explain = explain;
             createTeamDto.name = name;
 
