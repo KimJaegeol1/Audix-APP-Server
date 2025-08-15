@@ -41,15 +41,16 @@ export class AuthService {
             }
         );
 
-        await this.prisma.users.update({
+        // DB 업데이트 완료 후 응답
+        const updatedUser = await this.prisma.users.update({
             where: { id: user.id },
             data: { refresh_token: refreshToken }
-        })
+        });
 
         return {
             accessToken: accessToken,
             refreshToken: refreshToken,
-            user: user
+            user: updatedUser
         }
     }
 
