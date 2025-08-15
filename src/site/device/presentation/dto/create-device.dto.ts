@@ -7,5 +7,5 @@ export class CreateRequestDeviceDto {
     explain?: string;
     status?: string;
     image?: string;
-    parts: string[]
+    parts: string; // form-data로 전송 시 문자열로 받음
 }

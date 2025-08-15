@@ -24,6 +24,9 @@ export class DeviceService {
             const createDeviceDto = new CreateDeviceDto();
             const createDeviceInRedisDto = new CreateDeviceInRedisDto();
 
+            // parts를 string에서 string[] 배열로 변환
+            const partsArray = parts ? parts.split(',').map(part => part.trim()) : [];
+
             createDeviceDto.areaId = areaId;
             createDeviceDto.name = name;
             createDeviceDto.model = model;
@@ -32,7 +35,7 @@ export class DeviceService {
             createDeviceDto.explain = explain;
             createDeviceDto.status = status;
             createDeviceDto.image = image;
-            createDeviceDto.parts = parts;
+            createDeviceDto.parts = partsArray;
 
             // DB에 저장하고 생성된 device 객체 반환받기
             const createDevice = await this.deviceRepository.createDevice(createDeviceDto, tx);
