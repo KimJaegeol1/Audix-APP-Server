@@ -10,7 +10,14 @@ export class DeviceInRedisRepository {
     //---CREATE---
     async createDevice(createDeviceInRedisDto: CreateDeviceInRedisDto): Promise<Boolean> {
         const deviceKey = `device:${createDeviceInRedisDto.deviceId}`;
-        await this.redis.hset(deviceKey, createDeviceInRedisDto);
+
+        // parts 객체를 JSON 문자열로 변환해서 저장
+        const redisData = {
+            ...createDeviceInRedisDto,
+            parts: JSON.stringify(createDeviceInRedisDto.parts)
+        };
+
+        await this.redis.hset(deviceKey, redisData);
 
         return true
     }
@@ -33,6 +40,7 @@ export class DeviceInRedisRepository {
                     normalScore: parseFloat(data.normalScore),
                     image: data.image,
                     status: data.status,
+                    aiText: data.aiText,
                 });
             }
         }

@@ -51,9 +51,13 @@ export class DeviceService {
             createDeviceInRedisDto.model = createDevice.model;
             createDeviceInRedisDto.address = createDevice.address;
             createDeviceInRedisDto.deviceManager = createDevice.device_manager;
-            for (const key in createDevice.parts) {
-                createDeviceInRedisDto.parts[key] = NUMBER_CONSTANTS.DEFAULT_DEVICE_NORMAL_SCORE;
+
+            // parts 객체 초기화 후 데이터 설정
+            createDeviceInRedisDto.parts = {};
+            for (const part of createDevice.parts) {
+                createDeviceInRedisDto.parts[part] = NUMBER_CONSTANTS.DEFAULT_DEVICE_NORMAL_SCORE;
             }
+
             createDeviceInRedisDto.normalScore = NUMBER_CONSTANTS.DEFAULT_DEVICE_NORMAL_SCORE;
             createDeviceInRedisDto.image = createDevice.image ?? '';
             createDeviceInRedisDto.status = createDevice.status ?? '';
