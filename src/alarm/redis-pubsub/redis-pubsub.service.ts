@@ -16,6 +16,20 @@ interface AlertData {
     type: string;
 }
 
+interface DeviceData {
+    deviceId: number;
+    areaId?: number;
+    name: string;
+    model: string;
+    address: string;
+    deviceManager: string;
+    parts: any;
+    normalScore: number;
+    image: string;
+    status: string;
+    aiText: string;
+}
+
 @Injectable()
 export class RedisPubSubService implements OnModuleInit, OnModuleDestroy {
     private readonly logger = new Logger(RedisPubSubService.name);
@@ -46,7 +60,7 @@ export class RedisPubSubService implements OnModuleInit, OnModuleDestroy {
         await this.subscriber.quit();
     }
 
-    private handleMessage(channel: string, message: string) {
+    private async handleMessage(channel: string, message: string) {
         try {
             if (channel === 'device_alerts') {
                 const alertData: DeviceAlertMessage = JSON.parse(message);
@@ -54,7 +68,30 @@ export class RedisPubSubService implements OnModuleInit, OnModuleDestroy {
                     `🚨 이상 감지 알림: Device ${alertData.deviceId}, NormalScore: ${alertData.normalScore}`
                 );
 
-                this.deviceAlertGateway.sendAlert(alertData)
+                // Redis에서 해당 device의 전체 정보 조회
+                const deviceInfo = await this.getDeviceInfo(alertData.deviceId);
+
+                if (deviceInfo) {
+                    // 알림 메시지와 디바이스 정보를 합쳐서 전송
+                    const alertMessage = {
+                        ...deviceInfo,
+                        normalScore: alertData.normalScore, // 새로운 normalScore로 업데이트
+                        message: this.generateAlertMessage(deviceInfo, alertData.normalScore),
+                        timestamp: new Date().toISOString()
+                    };
+
+                    this.deviceAlertGateway.sendAlert(alertMessage);
+                    this.logger.log(`📡 전체 디바이스 정보와 함께 알림 전송: ${JSON.stringify(alertMessage)}`);
+                } else {
+                    this.logger.error(`❌ Device ${alertData.deviceId} 정보를 찾을 수 없음`);
+                    // 디바이스 정보가 없어도 기본 알림은 전송
+                    this.deviceAlertGateway.sendAlert({
+                        deviceId: alertData.deviceId,
+                        normalScore: alertData.normalScore,
+                        message: `Device ${alertData.deviceId} 이상 감지`,
+                        timestamp: new Date().toISOString()
+                    });
+                }
             }
         } catch (error) {
             this.logger.error(`메시지 처리 오류: ${error.message}`, error.stack);
@@ -66,6 +103,61 @@ export class RedisPubSubService implements OnModuleInit, OnModuleDestroy {
         const message = JSON.stringify({ deviceId, normalScore });
         await this.redis.publish('device_alerts', message);
         this.logger.log(`테스트 알림 발행: ${message}`);
+    }
+
+    // Redis에서 device 정보 조회
+    private async getDeviceInfo(deviceId: number): Promise<DeviceData | null> {
+        try {
+            const deviceKey = `device:${deviceId}`;
+            const data = await this.redis.hgetall(deviceKey);
+
+            if (!data || Object.keys(data).length === 0) {
+                this.logger.warn(`Device ${deviceId} 정보가 Redis에 없음`);
+                return null;
+            }
+
+            return {
+                deviceId: parseInt(data.deviceId),
+                areaId: data.areaId ? parseInt(data.areaId) : undefined,
+                name: data.name || '',
+                model: data.model || '',
+                address: data.address || '',
+                deviceManager: data.deviceManager || '',
+                parts: JSON.parse(data.parts || '{}'),
+                normalScore: parseFloat(data.normalScore || '0'),
+                image: data.image || '',
+                status: data.status || 'unknown',
+                aiText: data.aiText || '',
+            };
+        } catch (error) {
+            this.logger.error(`Device ${deviceId} 정보 조회 오류: ${error.message}`);
+            return null;
+        }
+    }
+
+    // 알림 메시지 생성
+    private generateAlertMessage(deviceInfo: DeviceData, normalScore: number): string {
+        const status = this.determineDeviceStatus(normalScore);
+        const deviceName = deviceInfo.name || `Device-${deviceInfo.deviceId}`;
+
+        switch (status) {
+            case 'danger':
+                return `${deviceName}에서 심각한 이상음이 감지되었습니다. 즉시 확인이 필요합니다.`;
+            case 'warning':
+                return `${deviceName}에서 주의가 필요한 이상음이 감지되었습니다.`;
+            case 'normal':
+                return `${deviceName}이 정상 상태로 복구되었습니다.`;
+            default:
+                return `${deviceName}의 상태를 확인해주세요.`;
+        }
+    }
+
+    // normalScore에 따른 상태 판단
+    private determineDeviceStatus(normalScore: number): string {
+        if (normalScore >= 0.8) return 'normal';
+        if (normalScore >= 0.6) return 'warning';
+        if (normalScore >= 0.4) return 'warning';
+        return 'danger';
     }
 
     // 모든 알림 히스토리 조회
